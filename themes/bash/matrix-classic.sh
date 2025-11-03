@@ -4,6 +4,12 @@
 init_term() {
     printf '\e[?1049h\e[?25l'
     shopt -s checkwinsize; (:;:)
+    
+    # Display banner if available
+    if [ -f "$(dirname "$0")/../universal/ascii-banner.sh" ]; then
+        source "$(dirname "$0")/../universal/ascii-banner.sh"
+        display_banner "matrix" 2>/dev/null || true
+    fi
 }
 
 cleanup() {

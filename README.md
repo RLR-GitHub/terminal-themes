@@ -16,6 +16,47 @@
 
 ---
 
+<div align="center">
+
+```
+  >
+
+  #      ######    ######   #    #  #####
+   #     #     #  #     #  #    # #
+    #    #     #  #     #  #   #  #
+     #   ######   #     #  #####   #####
+      #  #   #    #     #  #   #       #
+  #    # #    #   #     #  #    #      #
+   #  #  #     #  ######   #     #  #####
+
+
+  #     #    #    ######  ######   #  #    #
+  ##   ##   # #      #    #     #  #  #  #
+  # # # #  #   #     #    #     #  #   ##
+  #  #  # #     #   #    ######   #   ##
+  #     # #######   #    #   #    #   ##
+  #     # #     #   #    #    #   #  # #
+  #     # #     #   #    #     #  # #   #
+```
+
+*Welcome to the Matrix. Your terminal will never be the same.*
+
+</div>
+
+---
+
+## 📸 Terminal Preview
+
+When you run any Rory Terminal theme, you'll see the ASCII banner followed by the Matrix rain animation:
+
+<div align="center">
+<img src="https://user-images.githubusercontent.com/placeholder/terminal-demo.gif" alt="Rory Terminal in action" width="600">
+</div>
+
+> **Note:** The banner colors adapt to your selected theme. The image above shows the Hacker theme with bright green colors.
+
+---
+
 ## 🎨 Theme Showcase
 
 This repository contains **5 unique terminal themes** featuring Matrix-style digital rain animations with custom color schemes, symbols, and alerts for different occasions:
@@ -65,7 +106,7 @@ This repository contains **5 unique terminal themes** featuring Matrix-style dig
 <td>APT/Debian</td>
 <td><code>sudo apt install rory-terminal</code></td>
 <td><code>curl -fsSL https://git.io/rory-terminal | bash</code></td>
-<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .deb</a></td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .deb</a> <sup>*</sup></td>
 </tr>
 <tr>
 <td>YUM/RPM</td>
@@ -210,6 +251,8 @@ All installation methods provide:
 - **Terminal commands** - Run `rory-terminal` from anywhere
 - **Shell integration** - Automatic theme loading
 - **GUI theme selector** - Visual theme management
+
+> **Note**: <sup>*</sup> Native installers (.deb, .rpm, .msi) will be available shortly via GitHub Releases. For now, please use the script installation methods or check the [Actions tab](https://github.com/RLR-GitHub/terminal-themes/actions) for build status.
 
 ## 📋 Requirements
 
