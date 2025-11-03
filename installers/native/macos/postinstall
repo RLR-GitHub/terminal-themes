@@ -1,0 +1,36 @@
+#!/bin/bash
+# Post-installation script for macOS package
+
+USER_HOME=$(eval echo ~${SUDO_USER})
+SHELL_TYPE="${SHELL##*/}"
+
+echo "Configuring Rory Terminal for user: ${SUDO_USER}"
+
+# Detect shell
+if [[ -n "$ZSH_VERSION" ]] || [[ "$SHELL_TYPE" == "zsh" ]]; then
+    CONFIG_FILE="${USER_HOME}/.zshrc"
+elif [[ -n "$BASH_VERSION" ]] || [[ "$SHELL_TYPE" == "bash" ]]; then
+    CONFIG_FILE="${USER_HOME}/.bashrc"
+else
+    CONFIG_FILE="${USER_HOME}/.bashrc"
+fi
+
+# Add to PATH if not already present
+if ! grep -q "/usr/local/bin/rory" "$CONFIG_FILE" 2>/dev/null; then
+    echo "" >> "$CONFIG_FILE"
+    echo "# Rory Terminal - Added by installer" >> "$CONFIG_FILE"
+    echo 'export PATH="/usr/local/bin:$PATH"' >> "$CONFIG_FILE"
+    echo "alias theme='rory-theme'" >> "$CONFIG_FILE"
+    echo "alias matrix='rory-matrix --init'" >> "$CONFIG_FILE"
+fi
+
+# Create config directory
+mkdir -p "${USER_HOME}/.config/rory-terminal"
+chown -R ${SUDO_USER}:staff "${USER_HOME}/.config/rory-terminal"
+
+echo "Installation complete!"
+echo "Run 'rory-theme' to manage themes"
+echo "Run 'rory-matrix' for Matrix animation"
+
+exit 0
+

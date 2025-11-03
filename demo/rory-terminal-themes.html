@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rory's Terminal Theme Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes glitch {
+            0%, 100% { text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff; }
+            25% { text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff; }
+            50% { text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff; }
+            75% { text-shadow: -2px -2px #ff00ff, 2px 2px #00ffff; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 4em;
+            text-transform: uppercase;
+            letter-spacing: 12px;
+            background: linear-gradient(90deg, #00ff00, #00ffcc, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glitch 3s infinite;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            color: #00ffcc;
+            animation: pulse 2s infinite;
+        }
+
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        .theme-card {
+            background: rgba(20, 20, 20, 0.8);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .theme-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .theme-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid;
+        }
+
+        .theme-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .theme-icon {
+            font-size: 2em;
+            animation: float 3s infinite;
+        }
+
+        .terminal-window {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .terminal-titlebar {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            gap: 8px;
+        }
+
+        .terminal-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-button.close { background: #ff5f56; }
+        .terminal-button.minimize { background: #ffbd2e; }
+        .terminal-button.maximize { background: #27c93f; }
+
+        .terminal-title {
+            flex: 1;
+            text-align: center;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .terminal-content {
+            height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .alert-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 15px 30px;
+            font-size: 1.3em;
+            font-weight: bold;
+            border: 2px solid;
+            display: none;
+            z-index: 100;
+            animation: glitch 0.3s infinite;
+            border-radius: 4px;
+        }
+
+        .script-section {
+            margin-top: 20px;
+        }
+
+        .script-label {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .script-box {
+            background: #0a0a0a;
+            border: 2px solid;
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .script-box pre {
+            margin: 0;
+            font-size: 0.85em;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px;
+        }
+
+        .copy-btn.copied {
+            animation: pulse 0.5s;
+        }
+
+        /* Halloween Theme */
+        .halloween .theme-header { border-color: #ff6b00; }
+        .halloween .theme-name { color: #ff6b00; }
+        .halloween .terminal-titlebar { background: #1a0f00; color: #ff6b00; }
+        .halloween .script-box { border-color: #ff6b00; color: #ff6b00; }
+        .halloween .copy-btn { background: #ff6b00; color: #000; }
+        .halloween .copy-btn:hover { box-shadow: 0 0 20px #ff6b00; }
+        .halloween .alert-overlay { background: #ff0000; color: #fff; border-color: #ff6b00; }
+        .halloween:hover { box-shadow: 0 12px 40px rgba(255, 107, 0, 0.4); }
+
+        /* Christmas Theme */
+        .christmas .theme-header { border-color: #ff0000; }
+        .christmas .theme-name { 
+            background: linear-gradient(90deg, #ff0000, #00ff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .christmas .terminal-titlebar { background: #0f1a0f; color: #ff0000; }
+        .christmas .script-box { border-color: #00ff00; color: #00ff00; }
+        .christmas .copy-btn { background: linear-gradient(135deg, #ff0000, #00ff00); color: #fff; }
+        .christmas .copy-btn:hover { box-shadow: 0 0 20px #00ff00; }
+        .christmas .alert-overlay { background: #ff0000; color: #fff; border-color: #00ff00; }
+        .christmas:hover { box-shadow: 0 12px 40px rgba(255, 0, 0, 0.4); }
+
+        /* Easter Theme */
+        .easter .theme-header { border-color: #ff69b4; }
+        .easter .theme-name { 
+            background: linear-gradient(90deg, #ff69b4, #87ceeb, #98fb98);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .easter .terminal-titlebar { background: #1a0f1a; color: #ff69b4; }
+        .easter .script-box { border-color: #ff69b4; color: #87ceeb; }
+        .easter .copy-btn { background: linear-gradient(135deg, #ff69b4, #87ceeb, #98fb98); color: #000; }
+        .easter .copy-btn:hover { box-shadow: 0 0 20px #ff69b4; }
+        .easter .alert-overlay { background: #ff69b4; color: #fff; border-color: #87ceeb; }
+        .easter:hover { box-shadow: 0 12px 40px rgba(255, 105, 180, 0.4); }
+
+        /* Hacker Theme */
+        .hacker .theme-header { border-color: #00ff00; }
+        .hacker .theme-name { color: #00ff00; text-shadow: 0 0 10px #00ff00; }
+        .hacker .terminal-titlebar { background: #0a1a0a; color: #00ff00; }
+        .hacker .script-box { border-color: #00ff00; color: #00ff00; }
+        .hacker .copy-btn { background: #00ff00; color: #000; }
+        .hacker .copy-btn:hover { box-shadow: 0 0 20px #00ff00; }
+        .hacker .alert-overlay { background: #ff0000; color: #fff; border-color: #00ff00; }
+        .hacker:hover { box-shadow: 0 12px 40px rgba(0, 255, 0, 0.4); }
+
+        /* Matrix Theme */
+        .matrix .theme-header { border-color: #0f0; }
+        .matrix .theme-name { color: #0f0; text-shadow: 0 0 10px #0f0; }
+        .matrix .terminal-titlebar { background: #001a00; color: #0f0; }
+        .matrix .script-box { border-color: #0f0; color: #0f0; }
+        .matrix .copy-btn { background: #0f0; color: #000; }
+        .matrix .copy-btn:hover { box-shadow: 0 0 20px #0f0; }
+        .matrix .alert-overlay { background: #ff0000; color: #fff; border-color: #0f0; }
+        .matrix:hover { box-shadow: 0 12px 40px rgba(0, 255, 0, 0.4); }
+
+        @media (max-width: 768px) {
+            .themes-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2.5em;
+                letter-spacing: 6px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .script-box::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .script-box::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        .script-box::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .script-box::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>RORY</h1>
+        <div class="subtitle">Terminal Theme Collection • Custom Bash Scripts</div>
+    </div>
+
+    <div class="themes-grid">
+        <!-- Halloween Theme -->
+        <div class="theme-card halloween">
+            <div class="theme-header">
+                <div class="theme-name">Halloween</div>
+                <div class="theme-icon">🎃</div>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-titlebar">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                    <div class="terminal-title">rory@spooky-terminal:~$</div>
+                </div>
+                <div class="terminal-content">
+                    <canvas id="halloween-canvas"></canvas>
+                    <div class="alert-overlay" id="halloween-alert">BOO!</div>
+                </div>
+            </div>
+            <div class="script-section">
+                <div class="script-label">
+                    <span>📜</span>
+                    <span>Halloween Bash Script (matrix-halloween.sh)</span>
+                </div>
+                <div class="script-box">
+                    <button class="copy-btn" onclick="copyScript('halloween')">Copy</button>
+                    <pre id="halloween-script">#!/bin/bash
+# Halloween Matrix Theme - Spooky Orange & Black
+
+init_term() {
+    printf '\e[?1049h\e[?25l'
+    shopt -s checkwinsize; (:;:)
+}
+
+cleanup() {
+    printf "\e[?1049l\e[?25h"
+    clear
+    exit 0
+}
+
+rain() {
+    ((symbolCol = RANDOM % COLUMNS + 1))
+    ((symbolSpeed = RANDOM % 9 + 1))
+    ((symbolLen = RANDOM % 9 + 2))
+
+    for (( i = 0; i <= LINES + symbolLen; i++ )); do
+        symbol="${SYMBOLS:RANDOM % ${#SYMBOLS}:1}"
+        color=$((RANDOM % 6 + 202))  # Orange shades (208-214)
+        
+        printf '\e[%d;%dH\e[38;5;%dm%s\e[0m' "$i" "$symbolCol" "$color" "$symbol"
+        (( i > symbolLen )) && printf '\e[%d;%dH ' "$((i - symbolLen))" "$symbolCol"
+        sleep "0.0$symbolSpeed"
+    done
+}
+
+alert() {
+    alert_msg=${ALERTS[$((RANDOM % ${#ALERTS[@]}))]}
+    row=$((RANDOM % (LINES - 10) + 5))
+    col=$(( (COLUMNS - ${#alert_msg}) / 2 ))
+    
+    printf '\e[s'
+    printf '\e[%d;%dH\e[7;1;38;5;196m%s\e[0m' "$row" "$col" "$alert_msg"
+    sleep 0.2
+    printf '\e[%d;%dH%*s' "$row" "$col" "${#alert_msg}" " "
+    printf '\e[u'
+}
+
+trap cleanup SIGINT SIGTERM EXIT
+
+SYMBOLS='🎃👻💀🦇🕷️🕸️0123456789!@#$%^&*()_+[]{}|;:<>?'
+ALERTS=("BOO!" "HAUNTED!" "GHOST DETECTED" "TRICK OR TREAT" "SPOOKY ALERT" "SPIRITS AWAKEN" "BEWARE!" "CURSED SYSTEM")
+
+init_term
+
+if [ "$1" = "--init" ]; then
+    end_time=$((SECONDS + 5))
+    while [ $SECONDS -lt $end_time ]; do
+        (( RANDOM % 10 == 0 )) && alert
+        rain &
+        sleep 0.05
+    done
+    kill $(jobs -p) 2>/dev/null
+else
+    while true; do
+        (( RANDOM % 20 == 0 )) && alert
+        rain &
+        sleep 0.1
+    done
+fi</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Christmas Theme -->
+        <div class="theme-card christmas">
+            <div class="theme-header">
+                <div class="theme-name">Christmas</div>
+                <div class="theme-icon">🎄</div>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-titlebar">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                    <div class="terminal-title">rory@north-pole:~$</div>
+                </div>
+                <div class="terminal-content">
+                    <canvas id="christmas-canvas"></canvas>
+                    <div class="alert-overlay" id="christmas-alert">HO HO HO!</div>
+                </div>
+            </div>
+            <div class="script-section">
+                <div class="script-label">
+                    <span>📜</span>
+                    <span>Christmas Bash Script (matrix-christmas.sh)</span>
+                </div>
+                <div class="script-box">
+                    <button class="copy-btn" onclick="copyScript('christmas')">Copy</button>
+                    <pre id="christmas-script">#!/bin/bash
+# Christmas Matrix Theme - Festive Red & Green
+
+init_term() {
+    printf '\e[?1049h\e[?25l'
+    shopt -s checkwinsize; (:;:)
+}
+
+cleanup() {
+    printf "\e[?1049l\e[?25h"
+    clear
+    exit 0
+}
+
+rain() {
+    ((symbolCol = RANDOM % COLUMNS + 1))
+    ((symbolSpeed = RANDOM % 9 + 1))
+    ((symbolLen = RANDOM % 9 + 2))
+
+    for (( i = 0; i <= LINES + symbolLen; i++ )); do
+        symbol="${SYMBOLS:RANDOM % ${#SYMBOLS}:1}"
+        # Alternate between red (196-202) and green (40-46)
+        if (( RANDOM % 2 == 0 )); then
+            color=$((RANDOM % 6 + 196))
+        else
+            color=$((RANDOM % 6 + 40))
+        fi
+        
+        printf '\e[%d;%dH\e[38;5;%dm%s\e[0m' "$i" "$symbolCol" "$color" "$symbol"
+        (( i > symbolLen )) && printf '\e[%d;%dH ' "$((i - symbolLen))" "$symbolCol"
+        sleep "0.0$symbolSpeed"
+    done
+}
+
+alert() {
+    alert_msg=${ALERTS[$((RANDOM % ${#ALERTS[@]}))]}
+    row=$((RANDOM % (LINES - 10) + 5))
+    col=$(( (COLUMNS - ${#alert_msg}) / 2 ))
+    
+    printf '\e[s'
+    printf '\e[%d;%dH\e[7;1;38;5;196m%s\e[0m' "$row" "$col" "$alert_msg"
+    sleep 0.2
+    printf '\e[%d;%dH%*s' "$row" "$col" "${#alert_msg}" " "
+    printf '\e[u'
+}
+
+trap cleanup SIGINT SIGTERM EXIT
+
+SYMBOLS='🎄⛄🎅🎁❄️⭐🔔0123456789!@#$%^&*()_+[]{}|;:<>?'
+ALERTS=("HO HO HO!" "MERRY XMAS!" "SANTA DETECTED" "JINGLE BELLS" "GIFT INCOMING" "FESTIVE MODE" "SNOWFALL!" "SLEIGH BELLS")
+
+init_term
+
+if [ "$1" = "--init" ]; then
+    end_time=$((SECONDS + 5))
+    while [ $SECONDS -lt $end_time ]; do
+        (( RANDOM % 10 == 0 )) && alert
+        rain &
+        sleep 0.05
+    done
+    kill $(jobs -p) 2>/dev/null
+else
+    while true; do
+        (( RANDOM % 20 == 0 )) && alert
+        rain &
+        sleep 0.1
+    done
+fi</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Easter Theme -->
+        <div class="theme-card easter">
+            <div class="theme-header">
+                <div class="theme-name">Easter</div>
+                <div class="theme-icon">🐰</div>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-titlebar">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                    <div class="terminal-title">rory@spring-garden:~$</div>
+                </div>
+                <div class="terminal-content">
+                    <canvas id="easter-canvas"></canvas>
+                    <div class="alert-overlay" id="easter-alert">EGG FOUND!</div>
+                </div>
+            </div>
+            <div class="script-section">
+                <div class="script-label">
+                    <span>📜</span>
+                    <span>Easter Bash Script (matrix-easter.sh)</span>
+                </div>
+                <div class="script-box">
+                    <button class="copy-btn" onclick="copyScript('easter')">Copy</button>
+                    <pre id="easter-script">#!/bin/bash
+# Easter Matrix Theme - Pastel Pink, Blue & Green
+
+init_term() {
+    printf '\e[?1049h\e[?25l'
+    shopt -s checkwinsize; (:;:)
+}
+
+cleanup() {
+    printf "\e[?1049l\e[?25h"
+    clear
+    exit 0
+}
+
+rain() {
+    ((symbolCol = RANDOM % COLUMNS + 1))
+    ((symbolSpeed = RANDOM % 9 + 1))
+    ((symbolLen = RANDOM % 9 + 2))
+
+    for (( i = 0; i <= LINES + symbolLen; i++ )); do
+        symbol="${SYMBOLS:RANDOM % ${#SYMBOLS}:1}"
+        # Cycle through pastels: pink (205-211), cyan (117-123), green (120-126)
+        case $((RANDOM % 3)) in
+            0) color=$((RANDOM % 6 + 205)) ;;  # Pink
+            1) color=$((RANDOM % 6 + 117)) ;;  # Cyan
+            2) color=$((RANDOM % 6 + 120)) ;;  # Green
+        esac
+        
+        printf '\e[%d;%dH\e[38;5;%dm%s\e[0m' "$i" "$symbolCol" "$color" "$symbol"
+        (( i > symbolLen )) && printf '\e[%d;%dH ' "$((i - symbolLen))" "$symbolCol"
+        sleep "0.0$symbolSpeed"
+    done
+}
+
+alert() {
+    alert_msg=${ALERTS[$((RANDOM % ${#ALERTS[@]}))]}
+    row=$((RANDOM % (LINES - 10) + 5))
+    col=$(( (COLUMNS - ${#alert_msg}) / 2 ))
+    
+    printf '\e[s'
+    printf '\e[%d;%dH\e[7;1;38;5;205m%s\e[0m' "$row" "$col" "$alert_msg"
+    sleep 0.2
+    printf '\e[%d;%dH%*s' "$row" "$col" "${#alert_msg}" " "
+    printf '\e[u'
+}
+
+trap cleanup SIGINT SIGTERM EXIT
+
+SYMBOLS='🐰🥚🐣🌷🌸🦋🌼0123456789!@#$%^&*()_+[]{}|;:<>?'
+ALERTS=("EGG FOUND!" "BUNNY HOP!" "SPRING TIME" "EASTER JOY" "BASKET FULL" "HATCH ALERT" "BLOOM MODE" "HOPPY DAY!")
+
+init_term
+
+if [ "$1" = "--init" ]; then
+    end_time=$((SECONDS + 5))
+    while [ $SECONDS -lt $end_time ]; do
+        (( RANDOM % 10 == 0 )) && alert
+        rain &
+        sleep 0.05
+    done
+    kill $(jobs -p) 2>/dev/null
+else
+    while true; do
+        (( RANDOM % 20 == 0 )) && alert
+        rain &
+        sleep 0.1
+    done
+fi</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hacker Theme -->
+        <div class="theme-card hacker">
+            <div class="theme-header">
+                <div class="theme-name">Hacker</div>
+                <div class="theme-icon">💻</div>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-titlebar">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                    <div class="terminal-title">rory@r0ry.computer:~$</div>
+                </div>
+                <div class="terminal-content">
+                    <canvas id="hacker-canvas"></canvas>
+                    <div class="alert-overlay" id="hacker-alert">ACCESS GRANTED</div>
+                </div>
+            </div>
+            <div class="script-section">
+                <div class="script-label">
+                    <span>📜</span>
+                    <span>Hacker Bash Script (matrix-hacker.sh)</span>
+                </div>
+                <div class="script-box">
+                    <button class="copy-btn" onclick="copyScript('hacker')">Copy</button>
+                    <pre id="hacker-script">#!/bin/bash
+# Hacker Matrix Theme - Bright Green Cyberspace
+
+init_term() {
+    printf '\e[?1049h\e[?25l'
+    shopt -s checkwinsize; (:;:)
+}
+
+cleanup() {
+    printf "\e[?1049l\e[?25h"
+    clear
+    exit 0
+}
+
+rain() {
+    ((symbolCol = RANDOM % COLUMNS + 1))
+    ((symbolSpeed = RANDOM % 9 + 1))
+    ((symbolLen = RANDOM % 9 + 2))
+
+    for (( i = 0; i <= LINES + symbolLen; i++ )); do
+        symbol="${SYMBOLS:RANDOM % ${#SYMBOLS}:1}"
+        color=$((RANDOM % 6 + 82))  # Bright green shades
+        
+        printf '\e[%d;%dH\e[38;5;%dm%s\e[0m' "$i" "$symbolCol" "$color" "$symbol"
+        (( i > symbolLen )) && printf '\e[%d;%dH ' "$((i - symbolLen))" "$symbolCol"
+        sleep "0.0$symbolSpeed"
+    done
+}
+
+alert() {
+    alert_msg=${ALERTS[$((RANDOM % ${#ALERTS[@]}))]}
+    row=$((RANDOM % (LINES - 10) + 5))
+    col=$(( (COLUMNS - ${#alert_msg}) / 2 ))
+    
+    printf '\e[s'
+    printf '\e[%d;%dH\e[7;1;31m%s\e[0m' "$row" "$col" "$alert_msg"
+    sleep 0.2
+    printf '\e[%d;%dH%*s' "$row" "$col" "${#alert_msg}" " "
+    printf '\e[u'
+}
+
+trap cleanup SIGINT SIGTERM EXIT
+
+SYMBOLS='r0ry.computer01!@#$%^&*()_+[]{}|;:<>?ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ'
+ALERTS=("ACCESS GRANTED" "BREACH DETECTED" "NODE COMPROMISED" "HACK IN PROGRESS" "FIREWALL DOWN" "ROOT ACCESS" "SYSTEM OWNED" "BACKDOOR OPEN")
+
+init_term
+
+if [ "$1" = "--init" ]; then
+    end_time=$((SECONDS + 5))
+    while [ $SECONDS -lt $end_time ]; do
+        (( RANDOM % 10 == 0 )) && alert
+        rain &
+        sleep 0.05
+    done
+    kill $(jobs -p) 2>/dev/null
+else
+    while true; do
+        (( RANDOM % 20 == 0 )) && alert
+        rain &
+        sleep 0.1
+    done
+fi</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matrix Theme -->
+        <div class="theme-card matrix">
+            <div class="theme-header">
+                <div class="theme-name">Matrix</div>
+                <div class="theme-icon">🟢</div>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-titlebar">
+                    <div class="terminal-button close"></div>
+                    <div class="terminal-button minimize"></div>
+                    <div class="terminal-button maximize"></div>
+                    <div class="terminal-title">rory@the-matrix:~$</div>
+                </div>
+                <div class="terminal-content">
+                    <canvas id="matrix-canvas"></canvas>
+                    <div class="alert-overlay" id="matrix-alert">SYSTEM ALERT</div>
+                </div>
+            </div>
+            <div class="script-section">
+                <div class="script-label">
+                    <span>📜</span>
+                    <span>Matrix Bash Script (matrix-classic.sh)</span>
+                </div>
+                <div class="script-box">
+                    <button class="copy-btn" onclick="copyScript('matrix')">Copy</button>
+                    <pre id="matrix-script">#!/bin/bash
+# Classic Matrix Theme - Original Black & Green
+
+init_term() {
+    printf '\e[?1049h\e[?25l'
+    shopt -s checkwinsize; (:;:)
+}
+
+cleanup() {
+    printf "\e[?1049l\e[?25h"
+    clear
+    exit 0
+}
+
+rain() {
+    ((symbolCol = RANDOM % COLUMNS + 1))
+    ((symbolSpeed = RANDOM % 9 + 1))
+    ((symbolLen = RANDOM % 9 + 2))
+
+    for (( i = 0; i <= LINES + symbolLen; i++ )); do
+        symbol="${SYMBOLS:RANDOM % ${#SYMBOLS}:1}"
+        color=$((RANDOM % 6 + 82))  # Green shades (256-color mode)
+        
+        printf '\e[%d;%dH\e[38;5;%dm%s\e[0m' "$i" "$symbolCol" "$color" "$symbol"
+        (( i > symbolLen )) && printf '\e[%d;%dH ' "$((i - symbolLen))" "$symbolCol"
+        sleep "0.0$symbolSpeed"
+    done
+}
+
+alert() {
+    alert_msg=${ALERTS[$((RANDOM % ${#ALERTS[@]}))]}
+    row=$((RANDOM % (LINES - 10) + 5))
+    col=$(( (COLUMNS - ${#alert_msg}) / 2 ))
+    
+    printf '\e[s'
+    printf '\e[%d;%dH\e[7;1;31m%s\e[0m' "$row" "$col" "$alert_msg"
+    sleep 0.2
+    printf '\e[%d;%dH%*s' "$row" "$col" "${#alert_msg}" " "
+    printf '\e[u'
+}
+
+trap cleanup SIGINT SIGTERM EXIT
+
+SYMBOLS='0123456789!@#$%^&*()-_=+[]{}|;:,.<>?ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ'
+ALERTS=("BREACH DETECTED" "NODE COMPROMISED" "SYSTEM ALERT" "HACK IN PROGRESS" "FIREWALL BREACHED" "INTRUSION DETECTED" "CODE RED" "ACCESS DENIED")
+
+init_term
+
+if [ "$1" = "--init" ]; then
+    end_time=$((SECONDS + 5))
+    while [ $SECONDS -lt $end_time ]; do
+        (( RANDOM % 10 == 0 )) && alert
+        rain &
+        sleep 0.05
+    done
+    kill $(jobs -p) 2>/dev/null
+else
+    while true; do
+        (( RANDOM % 20 == 0 )) && alert
+        rain &
+        sleep 0.1
+    done
+fi</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme configurations
+        const themes = {
+            halloween: {
+                chars: '🎃👻💀🦇01',
+                colors: ['#ff6b00', '#ff8800', '#ff9900', '#ffaa00'],
+                alerts: ['BOO!', 'HAUNTED!', 'GHOST!', 'SPOOKY!']
+            },
+            christmas: {
+                chars: '🎄⛄🎅🎁❄⭐01',
+                colors: ['#ff0000', '#00ff00', '#ff3333', '#33ff33'],
+                alerts: ['HO HO HO!', 'MERRY XMAS!', 'JINGLE!', 'FESTIVE!']
+            },
+            easter: {
+                chars: '🐰🥚🐣🌷🌸01',
+                colors: ['#ff69b4', '#87ceeb', '#98fb98', '#dda0dd'],
+                alerts: ['EGG FOUND!', 'BUNNY HOP!', 'SPRING!', 'BLOOM!']
+            },
+            hacker: {
+                chars: 'r0ry.computer01!@#$%ｱｲｳｴｵ',
+                colors: ['#00ff00', '#00ff33', '#33ff00', '#00cc00'],
+                alerts: ['ACCESS GRANTED', 'BREACH!', 'ROOT ACCESS', 'OWNED!']
+            },
+            matrix: {
+                chars: '01ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄ',
+                colors: ['#0f0', '#0f3', '#3f0', '#0c0'],
+                alerts: ['SYSTEM ALERT', 'BREACH!', 'NODE DOWN', 'CODE RED']
+            }
+        };
+
+        // Initialize all canvases
+        Object.keys(themes).forEach(themeName => {
+            initMatrix(themeName);
+        });
+
+        function initMatrix(themeName) {
+            const canvas = document.getElementById(`${themeName}-canvas`);
+            const ctx = canvas.getContext('2d');
+            const theme = themes[themeName];
+            
+            function resize() {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            const fontSize = 14;
+            const columns = Math.floor(canvas.width / fontSize);
+            const drops = Array(columns).fill(0).map(() => Math.random() * -100);
+
+            function draw() {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                ctx.font = `${fontSize}px monospace`;
+
+                for (let i = 0; i < drops.length; i++) {
+                    const char = theme.chars[Math.floor(Math.random() * theme.chars.length)];
+                    const color = theme.colors[Math.floor(Math.random() * theme.colors.length)];
+                    
+                    ctx.fillStyle = color;
+                    ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+
+            setInterval(draw, 33);
+
+            // Random alerts
+            const alertEl = document.getElementById(`${themeName}-alert`);
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    alertEl.textContent = theme.alerts[Math.floor(Math.random() * theme.alerts.length)];
+                    alertEl.style.display = 'block';
+                    setTimeout(() => {
+                        alertEl.style.display = 'none';
+                    }, 300);
+                }
+            }, 3000);
+        }
+
+        // Copy script functionality
+        function copyScript(theme) {
+            const scriptElement = document.getElementById(`${theme}-script`);
+            const text = scriptElement.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+{
+  "version": "3.0.0",
+  "themes": {
+    "halloween": {
+      "name": "Halloween",
+      "icon": "🎃",
+      "description": "Spooky Halloween vibes with orange matrix rain",
+      "colors": {
+        "primary": "#ff6b00",
+        "secondary": "#ff8800",
+        "accent": "#ffaa00",
+        "background": "#1a0f00",
+        "foreground": "#ff6b00",
+        "error": "#ff0000",
+        "success": "#00ff00"
+      },
+      "symbols": "🎃👻💀🦇🕷️🕸️0123456789!@#$%^&*()_+[]{}|;:<>?",
+      "alerts": ["BOO!", "HAUNTED!", "GHOST DETECTED", "TRICK OR TREAT", "SPOOKY ALERT", "SPIRITS AWAKEN", "BEWARE!", "CURSED SYSTEM"],
+      "season": "october",
+      "mood": "spooky"
+    },
+    "christmas": {
+      "name": "Christmas",
+      "icon": "🎄",
+      "description": "Festive holiday theme with red and green",
+      "colors": {
+        "primary": "#ff0000",
+        "secondary": "#00ff00",
+        "accent": "#ffffff",
+        "background": "#0f1a0f",
+        "foreground": "#00ff00",
+        "error": "#ff0000",
+        "success": "#00ff00"
+      },
+      "symbols": "🎄⛄🎅🎁❄️⭐🔔0123456789!@#$%^&*()_+[]{}|;:<>?",
+      "alerts": ["HO HO HO!", "MERRY XMAS!", "SANTA DETECTED", "JINGLE BELLS", "GIFT INCOMING", "FESTIVE MODE", "SNOWFALL!", "SLEIGH BELLS"],
+      "season": "december",
+      "mood": "festive"
+    },
+    "easter": {
+      "name": "Easter",
+      "icon": "🐰",
+      "description": "Spring celebration with pastel colors",
+      "colors": {
+        "primary": "#ff69b4",
+        "secondary": "#87ceeb",
+        "accent": "#98fb98",
+        "background": "#1a0f1a",
+        "foreground": "#ff69b4",
+        "error": "#ff0000",
+        "success": "#00ff00"
+      },
+      "symbols": "🐰🥚🐣🌷🌸🦋🌼0123456789!@#$%^&*()_+[]{}|;:<>?",
+      "alerts": ["EGG FOUND!", "BUNNY HOP!", "SPRING TIME", "EASTER JOY", "BASKET FULL", "HATCH ALERT", "BLOOM MODE", "HOPPY DAY!"],
+      "season": "spring",
+      "mood": "cheerful"
+    },
+    "hacker": {
+      "name": "Hacker",
+      "icon": "💻",
+      "description": "Cyberpunk green with r0ry.computer branding",
+      "colors": {
+        "primary": "#00ff00",
+        "secondary": "#33ff33",
+        "accent": "#00cc00",
+        "background": "#0a1a0a",
+        "foreground": "#00ff00",
+        "error": "#ff0000",
+        "success": "#00ff00"
+      },
+      "symbols": "r0ry.computer01!@#$%^&*()_+[]{}|;:<>?ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ",
+      "alerts": ["ACCESS GRANTED", "BREACH DETECTED", "NODE COMPROMISED", "HACK IN PROGRESS", "FIREWALL DOWN", "ROOT ACCESS", "SYSTEM OWNED", "BACKDOOR OPEN"],
+      "season": "all",
+      "mood": "elite"
+    },
+    "matrix": {
+      "name": "Matrix",
+      "icon": "🟢",
+      "description": "Classic Matrix movie aesthetic",
+      "colors": {
+        "primary": "#0f0",
+        "secondary": "#0f3",
+        "accent": "#0c0",
+        "background": "#001a00",
+        "foreground": "#0f0",
+        "error": "#f00",
+        "success": "#0f0"
+      },
+      "symbols": "0123456789!@#$%^&*()-_=+[]{}|;:,.<>?ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ",
+      "alerts": ["BREACH DETECTED", "NODE COMPROMISED", "SYSTEM ALERT", "HACK IN PROGRESS", "FIREWALL BREACHED", "INTRUSION DETECTED", "CODE RED", "ACCESS DENIED"],
+      "season": "all",
+      "mood": "classic"
+    }
+  },
+  "platforms": {
+    "macos": {
+      "supported": true,
+      "shells": ["bash", "zsh", "fish"],
+      "package_managers": ["brew", "macports"],
+      "native_package": "pkg",
+      "install_method": "curl",
+      "option1": true,
+      "option2": true
+    },
+    "linux": {
+      "supported": true,
+      "shells": ["bash", "zsh", "fish"],
+      "package_managers": ["apt", "dnf", "pacman", "zypper"],
+      "native_packages": ["deb", "rpm", "appimage"],
+      "install_method": "curl",
+      "option1": true,
+      "option2": true
+    },
+    "windows": {
+      "supported": true,
+      "shells": ["powershell", "cmd"],
+      "package_managers": ["winget", "scoop", "chocolatey"],
+      "native_package": "msi",
+      "install_method": "iwr",
+      "option1": true,
+      "option2": false
+    }
+  },
+  "options": {
+    "starship": {
+      "name": "Option #1: Starship",
+      "description": "Modern cross-platform prompt with theme integration",
+      "complexity": "simple",
+      "dependencies": ["starship", "eza", "bat", "delta"],
+      "platforms": ["macos", "linux", "windows"],
+      "recommended": true
+    },
+    "pty-shim": {
+      "name": "Option #2: PTY Shim",
+      "description": "Deep output interception with custom color injection",
+      "complexity": "advanced",
+      "dependencies": ["gcc", "make"],
+      "platforms": ["macos", "linux"],
+      "recommended": false,
+      "requires_compilation": true
+    },
+    "matrix-only": {
+      "name": "Option #3: Matrix Only",
+      "description": "Just the Matrix rain animations",
+      "complexity": "minimal",
+      "dependencies": [],
+      "platforms": ["macos", "linux", "windows"],
+      "recommended": false
+    }
+  }
+}
+

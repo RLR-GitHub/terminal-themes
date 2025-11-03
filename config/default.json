@@ -1,0 +1,38 @@
+{
+  "version": "3.0.0",
+  "default_theme": "hacker",
+  "default_option": "starship",
+  "auto_update": false,
+  "telemetry": false,
+  "features": {
+    "matrix_animation": true,
+    "startup_intro": true,
+    "git_integration": true,
+    "modern_tools": true,
+    "zsh_plugins": true
+  },
+  "performance": {
+    "cache_enabled": true,
+    "async_git": true,
+    "lazy_load": false
+  },
+  "ui": {
+    "show_icons": true,
+    "show_git_status": true,
+    "show_duration": true,
+    "compact_mode": false
+  },
+  "paths": {
+    "install_dir": "~/.local/share/rory-terminal",
+    "config_dir": "~/.config/rory-terminal",
+    "themes_dir": "~/.local/share/rory-terminal/themes",
+    "bin_dir": "~/.local/bin"
+  },
+  "urls": {
+    "repo": "https://github.com/RLR-GitHub/terminal-themes",
+    "raw": "https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main",
+    "releases": "https://github.com/RLR-GitHub/terminal-themes/releases",
+    "issues": "https://github.com/RLR-GitHub/terminal-themes/issues"
+  }
+}
+

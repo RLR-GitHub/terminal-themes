@@ -1,0 +1,124 @@
+# Easter Theme - Pastel Rainbow
+# Starship configuration for Rory Terminal Themes
+
+format = """
+[╭╴](bold bright-white)$os\
+$username\
+[](bg:color_pink fg:color_bg)\
+$directory\
+[](fg:color_pink bg:color_cyan)\
+$git_branch\
+$git_status\
+[](fg:color_cyan bg:color_bg)\
+$nodejs\
+$rust\
+$golang\
+$php\
+$python\
+[](fg:color_bg)\
+$line_break\
+[╰─](bold bright-white)$character"""
+
+palette = 'easter'
+
+[palettes.easter]
+color_fg = '#ffffff'
+color_bg = '#1a0f1a'
+color_pink = '#ff69b4'
+color_cyan = '#87ceeb'
+color_green = '#98fb98'
+color_purple = '#dda0dd'
+
+[os]
+disabled = false
+style = "bg:color_bg fg:color_pink"
+format = '[ $symbol ]($style)'
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+Macos = "󰀵"
+Linux = "󰌽"
+
+[username]
+show_always = true
+style_user = "bg:color_bg fg:color_cyan"
+style_root = "bg:color_bg fg:color_pink"
+format = '[ $user ]($style)'
+
+[directory]
+style = "fg:color_bg bg:color_pink"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Projects" = "󰲋 "
+
+[git_branch]
+symbol = "🐰"
+style = "bg:color_cyan fg:color_bg"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bg:color_cyan fg:color_bg"
+format = '[$all_status$ahead_behind ]($style)'
+conflicted = "🥚"
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+up_to_date = "✓"
+untracked = "?"
+stashed = "🌷"
+modified = "!"
+staged = '[++\($count\)](bg:color_cyan fg:color_bg)'
+renamed = "»"
+deleted = "🌸"
+
+[nodejs]
+symbol = ""
+style = "bg:color_bg fg:color_green"
+format = '[ $symbol ($version) ]($style)'
+
+[rust]
+symbol = ""
+style = "bg:color_bg fg:color_pink"
+format = '[ $symbol ($version) ]($style)'
+
+[golang]
+symbol = ""
+style = "bg:color_bg fg:color_cyan"
+format = '[ $symbol ($version) ]($style)'
+
+[php]
+symbol = ""
+style = "bg:color_bg fg:color_purple"
+format = '[ $symbol ($version) ]($style)'
+
+[python]
+symbol = "🐍"
+style = "bg:color_bg fg:color_green"
+format = '[ $symbol ($version) ]($style)'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:color_bg fg:color_pink"
+format = '[  $time ]($style)'
+
+[line_break]
+disabled = false
+
+[character]
+disabled = false
+success_symbol = '[▶](bold fg:color_green)'
+error_symbol = '[▶](bold fg:color_pink)'
+vimcmd_symbol = '[◀](bold fg:color_cyan)'
+vimcmd_replace_one_symbol = '[◀](bold fg:color_pink)'
+vimcmd_replace_symbol = '[◀](bold fg:color_pink)'
+vimcmd_visual_symbol = '[◀](bold fg:color_purple)'
+

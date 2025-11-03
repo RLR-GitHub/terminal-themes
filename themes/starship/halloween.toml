@@ -1,0 +1,123 @@
+# Halloween Theme - Spooky Orange & Black
+# Starship configuration for Rory Terminal Themes
+
+format = """
+[╭╴](bold bright-black)$os\
+$username\
+[](bg:color_orange fg:color_bg)\
+$directory\
+[](fg:color_orange bg:color_yellow)\
+$git_branch\
+$git_status\
+[](fg:color_yellow bg:color_bg)\
+$nodejs\
+$rust\
+$golang\
+$php\
+$python\
+[](fg:color_bg)\
+$line_break\
+[╰─](bold bright-black)$character"""
+
+palette = 'halloween'
+
+[palettes.halloween]
+color_fg = '#ff6b00'
+color_bg = '#1a0f00'
+color_orange = '#ff8800'
+color_yellow = '#ffaa00'
+color_red = '#ff0000'
+
+[os]
+disabled = false
+style = "bg:color_bg fg:color_fg"
+format = '[ $symbol ]($style)'
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+Macos = "󰀵"
+Linux = "󰌽"
+
+[username]
+show_always = true
+style_user = "bg:color_bg fg:color_fg"
+style_root = "bg:color_bg fg:color_red"
+format = '[ $user ]($style)'
+
+[directory]
+style = "fg:color_bg bg:color_orange"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = "󰝚 "
+"Pictures" = " "
+"Projects" = "󰲋 "
+
+[git_branch]
+symbol = "🎃"
+style = "bg:color_yellow fg:color_bg"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bg:color_yellow fg:color_bg"
+format = '[$all_status$ahead_behind ]($style)'
+conflicted = "👻"
+ahead = "⇡"
+behind = "⇣"
+diverged = "⇕"
+up_to_date = "✓"
+untracked = "?"
+stashed = "💀"
+modified = "!"
+staged = '[++\($count\)](bg:color_yellow fg:color_bg)'
+renamed = "»"
+deleted = "🕷️"
+
+[nodejs]
+symbol = ""
+style = "bg:color_bg fg:color_orange"
+format = '[ $symbol ($version) ]($style)'
+
+[rust]
+symbol = ""
+style = "bg:color_bg fg:color_orange"
+format = '[ $symbol ($version) ]($style)'
+
+[golang]
+symbol = ""
+style = "bg:color_bg fg:color_orange"
+format = '[ $symbol ($version) ]($style)'
+
+[php]
+symbol = ""
+style = "bg:color_bg fg:color_orange"
+format = '[ $symbol ($version) ]($style)'
+
+[python]
+symbol = "🐍"
+style = "bg:color_bg fg:color_orange"
+format = '[ $symbol ($version) ]($style)'
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:color_bg fg:color_fg"
+format = '[  $time ]($style)'
+
+[line_break]
+disabled = false
+
+[character]
+disabled = false
+success_symbol = '[▶](bold fg:color_fg)'
+error_symbol = '[▶](bold fg:color_red)'
+vimcmd_symbol = '[◀](bold fg:color_orange)'
+vimcmd_replace_one_symbol = '[◀](bold fg:color_yellow)'
+vimcmd_replace_symbol = '[◀](bold fg:color_yellow)'
+vimcmd_visual_symbol = '[◀](bold fg:color_yellow)'
+

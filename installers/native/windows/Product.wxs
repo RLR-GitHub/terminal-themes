@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="*" 
+             Name="Rory Terminal Themes" 
+             Language="1033" 
+             Version="3.0.0" 
+             Manufacturer="Rory" 
+             UpgradeCode="12345678-1234-1234-1234-123456789012">
+        
+        <Package InstallerVersion="200" 
+                 Compressed="yes" 
+                 InstallScope="perMachine" 
+                 Description="Rory Terminal Themes - Cyberpunk terminal customization" 
+                 Comments="Transform your terminal experience"/>
+        
+        <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+        <MediaTemplate EmbedCab="yes" />
+        
+        <!-- Installation directory -->
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="ProgramFilesFolder">
+                <Directory Id="INSTALLFOLDER" Name="RoryTerminal" />
+            </Directory>
+            <Directory Id="ProgramMenuFolder">
+                <Directory Id="ApplicationProgramsFolder" Name="Rory Terminal" />
+            </Directory>
+        </Directory>
+        
+        <!-- Features -->
+        <Feature Id="ProductFeature" Title="Rory Terminal Themes" Level="1">
+            <!-- Components will be added by build script -->
+        </Feature>
+        
+        <!-- UI -->
+        <UIRef Id="WixUI_Minimal"/>
+        <UIRef Id="WixUI_ErrorProgressText"/>
+    </Product>
+</Wix>
+
