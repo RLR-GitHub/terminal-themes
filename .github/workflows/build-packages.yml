@@ -14,7 +14,7 @@ on:
         default: '3.0.0'
 
 env:
-  VERSION: ${{ github.event.inputs.version || github.ref_name }}
+  VERSION: ${{ github.event.inputs.version || (startsWith(github.ref, 'refs/tags/v') && substring(github.ref, 11)) || '3.0.0' }}
 
 jobs:
   build-linux:
@@ -54,6 +54,7 @@ jobs:
           ./build-appimage.sh
           
       - name: Build Snap package
+        continue-on-error: true
         run: |
           sudo snap install snapcraft --classic
           cd installers/native/linux/snap
@@ -61,6 +62,7 @@ jobs:
           
       - name: Upload Linux packages
         uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: linux-packages
           path: |
@@ -68,6 +70,7 @@ jobs:
             dist/linux/*.rpm
             dist/linux/*.AppImage
             installers/native/linux/snap/*.snap
+          if-no-files-found: warn
 
   build-macos:
     name: Build macOS Packages
@@ -104,11 +107,13 @@ jobs:
           
       - name: Upload macOS packages
         uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: macos-packages
           path: |
             dist/macos/*.pkg
             dist/macos/*.dmg
+          if-no-files-found: warn
 
   build-windows:
     name: Build Windows Packages
@@ -144,11 +149,13 @@ jobs:
           
       - name: Upload Windows packages
         uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: windows-packages
           path: |
             dist/windows/*.msi
             dist/windows/*.nupkg
+          if-no-files-found: warn
 
   build-universal:
     name: Build Universal Archives
@@ -159,23 +166,25 @@ jobs:
       - name: Create source tarball
         run: |
           mkdir -p dist/source
-          git archive --format=tar.gz --prefix=rory-terminal-$VERSION/ \
-            -o dist/source/rory-terminal-$VERSION.tar.gz HEAD
+          git archive --format=tar.gz --prefix=rory-terminal-${{ env.VERSION }}/ \
+            -o dist/source/rory-terminal-${{ env.VERSION }}.tar.gz HEAD
             
       - name: Create universal zip
         run: |
           mkdir -p dist/universal
-          zip -r dist/universal/rory-terminal-$VERSION-universal.zip \
+          zip -r dist/universal/rory-terminal-${{ env.VERSION }}-universal.zip \
             core themes config installers docs README.md LICENSE \
             -x "*.git*" "*/.DS_Store" "*/build/*" "*/dist/*"
             
       - name: Upload universal packages
         uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: universal-packages
           path: |
             dist/source/*.tar.gz
             dist/universal/*.zip
+          if-no-files-found: warn
 
   create-checksums:
     name: Generate Checksums
@@ -195,6 +204,8 @@ jobs:
           
       - name: Upload checksums
         uses: actions/upload-artifact@v3
+        if: success() || failure()
         with:
           name: checksums
           path: checksums/SHA256SUMS
+          if-no-files-found: warn

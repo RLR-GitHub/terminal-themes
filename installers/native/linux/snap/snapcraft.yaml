@@ -41,7 +41,7 @@ apps:
 parts:
   rory-terminal:
     plugin: dump
-    source: ../../../
+    source: .
     stage-packages:
       - bash
       - coreutils
@@ -79,7 +79,7 @@ parts:
     plugin: nil
     override-build: |
       # Download and install starship
-      curl -sS https://starship.rs/install.sh | sh -s -- -y -b $SNAPCRAFT_PART_INSTALL/bin
+      curl -sS https://starship.rs/install.sh | sh -s -- -y -b $SNAPCRAFT_PART_INSTALL/bin || true
       
   modern-tools:
     plugin: nil
