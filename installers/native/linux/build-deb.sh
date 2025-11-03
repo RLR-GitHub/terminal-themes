@@ -1,9 +1,11 @@
 #!/bin/bash
 # Build Debian/Ubuntu .deb package for Rory Terminal Themes
+# This script creates a platform-specific installer for Debian/Ubuntu systems
 
-set -e
+set -euo pipefail
+trap 'echo "❌ Build failed at line $LINENO"; exit 1' ERR
 
-VERSION="3.0.0"
+VERSION="${1:-3.0.0}"
 PACKAGE_NAME="rory-terminal"
 ARCH="all"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -12,9 +14,14 @@ BUILD_DIR="${ROOT_DIR}/build/deb"
 DIST_DIR="${ROOT_DIR}/dist/linux"
 DEB_ROOT="${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}"
 
-print_step() { echo "==> $1"; }
-print_success() { echo "✓ $1"; }
-print_error() { echo "✗ $1"; exit 1; }
+print_step() { 
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "==> $1"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+print_success() { echo "✅ $1"; }
+print_error() { echo "❌ $1"; exit 1; }
 
 print_step "Building Debian package for Rory Terminal v${VERSION}"
 

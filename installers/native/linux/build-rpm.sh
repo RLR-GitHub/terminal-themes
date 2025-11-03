@@ -1,9 +1,11 @@
 #!/bin/bash
 # Build RPM package for Fedora/RHEL/CentOS
+# This script creates a platform-specific installer for Red Hat-based systems
 
-set -e
+set -euo pipefail
+trap 'echo "❌ Build failed at line $LINENO"; exit 1' ERR
 
-VERSION="3.0.0"
+VERSION="${1:-3.0.0}"
 RELEASE="1"
 PACKAGE_NAME="rory-terminal"
 ARCH="noarch"
@@ -13,9 +15,14 @@ BUILD_DIR="${ROOT_DIR}/build/rpm"
 DIST_DIR="${ROOT_DIR}/dist/linux"
 SPEC_FILE="${BUILD_DIR}/SPECS/${PACKAGE_NAME}.spec"
 
-print_step() { echo "==> $1"; }
-print_success() { echo "✓ $1"; }
-print_error() { echo "✗ $1"; exit 1; }
+print_step() { 
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "==> $1"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+print_success() { echo "✅ $1"; }
+print_error() { echo "❌ $1"; exit 1; }
 
 print_step "Building RPM package for Rory Terminal v${VERSION}"
 

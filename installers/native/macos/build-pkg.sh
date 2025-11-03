@@ -1,9 +1,11 @@
 #!/bin/bash
 # Build macOS .pkg installer for Rory Terminal Themes
+# Creates a platform-native installer for macOS systems
 
-set -e
+set -euo pipefail
+trap 'echo "❌ Build failed at line $LINENO"; exit 1' ERR
 
-VERSION="3.0.0"
+VERSION="${1:-3.0.0}"
 PACKAGE_NAME="RoryTerminal"
 IDENTIFIER="com.rory.terminal-themes"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -13,9 +15,14 @@ DIST_DIR="${ROOT_DIR}/dist/macos"
 PKG_ROOT="${BUILD_DIR}/pkgroot"
 SCRIPTS_DIR="${BUILD_DIR}/scripts"
 
-print_step() { echo "==> $1"; }
-print_success() { echo "✓ $1"; }
-print_error() { echo "✗ $1"; exit 1; }
+print_step() { 
+    echo ""
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "==> $1"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+print_success() { echo "✅ $1"; }
+print_error() { echo "❌ $1"; exit 1; }
 
 print_step "Building macOS .pkg installer for Rory Terminal v${VERSION}"
 
