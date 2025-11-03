@@ -28,280 +28,52 @@ jobs:
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "Building version: ${VERSION}"
 
-  build-linux:
+  build-all-packages:
     needs: set-version
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        include:
-          - package: deb
-            script: build-deb.sh
-          - package: rpm
-            script: build-rpm.sh
-          - package: appimage
-            script: build-appimage.sh
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          if [[ "${{ matrix.package }}" == "rpm" ]]; then
-            sudo apt-get install -y rpm rpmlint
-          elif [[ "${{ matrix.package }}" == "appimage" ]]; then
-            # Download and extract appimagetool (FUSE not available in GitHub Actions)
-            wget -O /tmp/appimagetool.AppImage https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-            chmod +x /tmp/appimagetool.AppImage
-            cd /tmp && /tmp/appimagetool.AppImage --appimage-extract
-            sudo mv /tmp/squashfs-root/usr/bin/* /usr/local/bin/
-            cd -
-          fi
-          
       - name: Set executable permissions
         run: |
-          chmod +x installers/native/linux/${{ matrix.script }}
-          # Ensure all required scripts are executable
           find . -name "*.sh" -type f -exec chmod +x {} \;
         
-      - name: Build ${{ matrix.package }} package
+      - name: Build all packages
         env:
           VERSION: ${{ needs.set-version.outputs.version }}
         run: |
-          cd "${{ github.workspace }}"
-          ./installers/native/linux/${{ matrix.script }}
+          .github/build-helpers/build-all-simple.sh
         
-      - name: Upload artifacts
+      - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: linux-${{ matrix.package }}
+          name: linux-packages
           path: dist/linux/*
-
-  build-snap:
-    needs: set-version
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install snapcraft
-        run: |
-          sudo snap install snapcraft --classic
           
-      - name: Build snap package
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          echo "Building snap package..."
-          cd installers/native/linux
-          # Use LXD instead of multipass for GitHub Actions
-          sudo snap install lxd
-          sudo lxd init --auto
-          snapcraft --use-lxd || echo "Snap build failed (non-critical)"
-          
-      - name: Upload snap
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-snap
-          path: installers/native/linux/*.snap
-          if-no-files-found: ignore
-
-  build-macos:
-    needs: set-version
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Set executable permissions
-        run: |
-          chmod +x installers/native/macos/*.sh
-          # Ensure all required scripts are executable
-          find . -name "*.sh" -type f -exec chmod +x {} \;
-          
-      - name: Build app bundle
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          # Build app bundle with version parameter
-          ./installers/native/macos/build-app-bundle.sh "$VERSION"
-        
-      - name: Build pkg installer
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          # Create fixed build script
-          cat > build-pkg-fixed.sh << 'EOF'
-          #!/bin/bash
-          set -e
-          VERSION="${VERSION:-3.0.0}"
-          BUILD_DIR="build/macos"
-          DIST_DIR="dist/macos"
-          PACKAGE_NAME="RoryTerminal"
-          IDENTIFIER="com.rory.terminal-themes"
-          
-          rm -rf "$BUILD_DIR"
-          mkdir -p "$BUILD_DIR/pkgroot/Applications"
-          mkdir -p "$BUILD_DIR/scripts"
-          mkdir -p "$DIST_DIR"
-          
-          # Copy app if exists
-          if [ -d "build/macos/RoryTerminal.app" ]; then
-              cp -R "build/macos/RoryTerminal.app" "$BUILD_DIR/pkgroot/Applications/"
-          else
-              mkdir -p "$BUILD_DIR/pkgroot/opt/rory-terminal"
-              cp -r core themes config "$BUILD_DIR/pkgroot/opt/rory-terminal/"
-          fi
-          
-          # Postinstall script
-          cat > "$BUILD_DIR/scripts/postinstall" << 'POSTINSTALL'
-          #!/bin/bash
-          ln -sf /Applications/RoryTerminal.app/Contents/MacOS/RoryTerminal /usr/local/bin/rory-terminal 2>/dev/null || true
-          exit 0
-          POSTINSTALL
-          chmod +x "$BUILD_DIR/scripts/postinstall"
-          
-          # Build component package
-          pkgbuild --root "$BUILD_DIR/pkgroot" \
-                   --scripts "$BUILD_DIR/scripts" \
-                   --identifier "$IDENTIFIER" \
-                   --version "$VERSION" \
-                   --ownership recommended \
-                   "$BUILD_DIR/${PACKAGE_NAME}-component.pkg"
-          
-          # Distribution XML
-          cat > "$BUILD_DIR/distribution.xml" << DIST_XML
-          <?xml version="1.0" encoding="utf-8"?>
-          <installer-gui-script minSpecVersion="1">
-              <title>Rory Terminal Themes</title>
-              <organization>com.rory</organization>
-              <domains enable_localSystem="true"/>
-              <options customize="never" require-scripts="false"/>
-              <pkg-ref id="$IDENTIFIER" version="$VERSION" onConclusion="none">${PACKAGE_NAME}-component.pkg</pkg-ref>
-              <choices-outline>
-                  <line choice="default">
-                      <line choice="$IDENTIFIER"/>
-                  </line>
-              </choices-outline>
-              <choice id="default"/>
-              <choice id="$IDENTIFIER" visible="false">
-                  <pkg-ref id="$IDENTIFIER"/>
-              </choice>
-          </installer-gui-script>
-          DIST_XML
-          
-          # Build product package
-          productbuild --distribution "$BUILD_DIR/distribution.xml" \
-                       --package-path "$BUILD_DIR" \
-                       "${DIST_DIR}/${PACKAGE_NAME}-${VERSION}.pkg"
-          EOF
-          chmod +x build-pkg-fixed.sh
-          ./build-pkg-fixed.sh
-        
-      # Uncomment when you have certificates
-      # - name: Code sign packages
-      #   env:
-      #     MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
-      #     MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
-      #   run: |
-      #     # Sign .app bundle
-      #     codesign --deep --force --verify --verbose \
-      #       --sign "Developer ID Application: Your Name" \
-      #       "build/macos/RoryTerminal.app"
-      #     # Sign .pkg
-      #     productsign --sign "Developer ID Installer: Your Name" \
-      #       "dist/macos/RoryTerminal-${{ needs.set-version.outputs.version }}.pkg" \
-      #       "dist/macos/RoryTerminal-${{ needs.set-version.outputs.version }}-signed.pkg"
-        
-      - name: Upload artifacts
+      - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-packages
           path: dist/macos/*
-
-  build-windows:
-    needs: set-version
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install WiX Toolset
-        run: |
-          # Skip WiX installation for now - use simple zip package
-          Write-Host "Skipping WiX installation for simplified build"
           
-      - name: Build Windows Package
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          # Create simple Windows package since WiX is not installed
-          $version = "${{ needs.set-version.outputs.version }}"
-          New-Item -ItemType Directory -Path "dist/windows" -Force
-          
-          # Create a zip package for Windows
-          Compress-Archive -Path @("core", "themes", "config", "installers/install.ps1", "README.md", "LICENSE") `
-                          -DestinationPath "dist/windows/RoryTerminal-$version-Windows.zip"
-          
-          Write-Host "Created Windows package: dist/windows/RoryTerminal-$version-Windows.zip"
-        shell: pwsh
-        
-      - name: Build Chocolatey package
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          Set-Location installers/native/windows/chocolatey
-          choco pack --version=${{ needs.set-version.outputs.version }}
-        shell: pwsh
-        
-      # Uncomment when you have certificates
-      # - name: Code sign MSI
-      #   env:
-      #     WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-      #     WINDOWS_CERTIFICATE_PWD: ${{ secrets.WINDOWS_CERTIFICATE_PWD }}
-      #   run: |
-      #     # Sign MSI
-      #     signtool sign /f certificate.pfx /p $env:WINDOWS_CERTIFICATE_PWD /d "Rory Terminal" dist/windows/*.msi
-      #   shell: pwsh
-        
-      - name: Upload artifacts
+      - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-packages
-          path: |
-            dist/windows/*.msi
-            installers/native/windows/chocolatey/*.nupkg
-
-  build-universal:
-    needs: set-version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Create source tarball
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          mkdir -p dist/source
-          git archive --format=tar.gz --prefix="rory-terminal-${VERSION}/" \
-            -o "dist/source/rory-terminal-${VERSION}.tar.gz" HEAD
-            
-      - name: Create universal zip
-        env:
-          VERSION: ${{ needs.set-version.outputs.version }}
-        run: |
-          mkdir -p dist/universal
-          zip -r "dist/universal/rory-terminal-${VERSION}-universal.zip" \
-            core themes config installers docs README.md LICENSE \
-            -x "*.git*" "*/.DS_Store" "*/build/*" "*/dist/*"
-            
-      - name: Upload artifacts
+          path: dist/windows/*
+          
+      - name: Upload Universal artifacts
         uses: actions/upload-artifact@v4
         with:
           name: universal-packages
-          path: |
-            dist/source/*
-            dist/universal/*
+          path: dist/universal/*
+
+
+
+
 
   create-checksums:
-    needs: [build-linux, build-macos, build-windows, build-universal]
+    needs: [build-all-packages]
     runs-on: ubuntu-latest
     if: always()
     steps:
