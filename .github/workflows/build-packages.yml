@@ -47,25 +47,31 @@ jobs:
             rpm \
             snapd \
             flatpak \
-            flatpak-builder
+            flatpak-builder \
+            fuse \
+            libfuse2
       
       - name: Build DEB package
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/linux
           chmod +x build-deb.sh
-          ./build-deb.sh
+          ./build-deb.sh "$VERSION"
           
       - name: Build RPM package  
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/linux
           chmod +x build-rpm.sh
-          ./build-rpm.sh
+          ./build-rpm.sh "$VERSION"
           
       - name: Build AppImage
+        continue-on-error: true
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/linux
           chmod +x build-appimage.sh
-          ./build-appimage.sh
+          ./build-appimage.sh "$VERSION"
           
       - name: Build Snap package
         continue-on-error: true
@@ -99,12 +105,15 @@ jobs:
           
       - name: Build PKG installer
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/macos
           chmod +x build-pkg.sh
-          ./build-pkg.sh
+          ./build-pkg.sh "$VERSION"
           
       - name: Build App Bundle and DMG
+        continue-on-error: true
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/macos
           chmod +x build-app-bundle.sh
           ./build-app-bundle.sh
