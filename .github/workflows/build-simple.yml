@@ -1,0 +1,129 @@
+name: Build Simple Packages
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Universal Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set version
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            VERSION="${GITHUB_REF#refs/tags/v}"
+          else
+            VERSION="3.0.0"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Building version: ${VERSION}"
+      
+      - name: Make scripts executable
+        run: |
+          find . -name "*.sh" -type f -exec chmod +x {} \;
+      
+      - name: Build packages
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          # Create directories
+          mkdir -p dist/{linux,macos,windows,universal}
+          
+          # Create universal zip
+          echo "Creating universal zip..."
+          zip -r "dist/universal/rory-terminal-${VERSION}-universal.zip" \
+            core themes config installers docs README.md LICENSE \
+            -x "*.git*" "*/.DS_Store" "*/dist/*" "*/.github/*" "*/build/*" \
+            > /dev/null
+          
+          # Create source tarball
+          echo "Creating source tarball..."
+          tar czf "dist/universal/rory-terminal-${VERSION}.tar.gz" \
+            --exclude=".git" --exclude="dist" --exclude="build" --exclude=".github" \
+            --transform="s,^,rory-terminal-${VERSION}/," \
+            core themes config installers docs README.md LICENSE
+          
+          # Create simple .deb structure (without dpkg-deb)
+          echo "Creating .deb package structure..."
+          DEB_DIR="dist/linux/deb-structure"
+          mkdir -p "$DEB_DIR/DEBIAN"
+          mkdir -p "$DEB_DIR/opt/rory-terminal"
+          mkdir -p "$DEB_DIR/usr/local/bin"
+          
+          # Copy files
+          cp -r core themes config "$DEB_DIR/opt/rory-terminal/"
+          
+          # Create control file
+          cat > "$DEB_DIR/DEBIAN/control" << EOF
+          Package: rory-terminal
+          Version: ${VERSION}
+          Section: utils
+          Priority: optional
+          Architecture: all
+          Depends: bash (>= 4.0)
+          Maintainer: Rory Terminal Team <support@rory-terminal.com>
+          Description: Cyberpunk terminal themes with Matrix animations
+          EOF
+          
+          # Create launcher
+          cat > "$DEB_DIR/usr/local/bin/rory-terminal" << 'EOF'
+          #!/bin/bash
+          echo "Rory Terminal v${VERSION}"
+          exec bash /opt/rory-terminal/core/option1-starship/theme-manager.sh "$@"
+          EOF
+          chmod +x "$DEB_DIR/usr/local/bin/rory-terminal"
+          
+          # Package as tar.gz since we don't have dpkg-deb
+          tar czf "dist/linux/rory-terminal_${VERSION}_all.deb.tar.gz" -C "$DEB_DIR" .
+          
+          echo "Build completed successfully!"
+          ls -la dist/universal/
+          ls -la dist/linux/
+      
+      - name: Generate checksums
+        run: |
+          cd dist
+          find . -type f \( -name "*.zip" -o -name "*.tar.gz" \) -exec sha256sum {} \; > SHA256SUMS
+          cat SHA256SUMS
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: |
+            dist/**/*.zip
+            dist/**/*.tar.gz
+            dist/SHA256SUMS
+      
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/**/*.zip
+            dist/**/*.tar.gz
+            dist/SHA256SUMS
+          body: |
+            # Rory Terminal ${{ steps.version.outputs.version }}
+            
+            ## Installation
+            
+            ### Quick Install
+            ```bash
+            curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+            ```
+            
+            ### Downloads
+            - Universal package: `rory-terminal-${{ steps.version.outputs.version }}-universal.zip`
+            - Source tarball: `rory-terminal-${{ steps.version.outputs.version }}.tar.gz`
+            
+            See [README](https://github.com/RLR-GitHub/terminal-themes) for more installation options.

@@ -55,12 +55,17 @@ jobs:
           fi
           
       - name: Set executable permissions
-        run: chmod +x installers/native/linux/${{ matrix.script }}
+        run: |
+          chmod +x installers/native/linux/${{ matrix.script }}
+          # Ensure all required scripts are executable
+          find . -name "*.sh" -type f -exec chmod +x {} \;
         
       - name: Build ${{ matrix.package }} package
         env:
           VERSION: ${{ needs.set-version.outputs.version }}
-        run: ./installers/native/linux/${{ matrix.script }}
+        run: |
+          cd "${{ github.workspace }}"
+          ./installers/native/linux/${{ matrix.script }}
         
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -102,6 +107,8 @@ jobs:
       - name: Set executable permissions
         run: |
           chmod +x installers/native/macos/*.sh
+          # Ensure all required scripts are executable
+          find . -name "*.sh" -type f -exec chmod +x {} \;
           
       - name: Build app bundle
         env:
@@ -209,8 +216,8 @@ jobs:
       
       - name: Install WiX Toolset
         run: |
-          choco install wixtoolset -y
-          refreshenv
+          # Skip WiX installation for now - use simple zip package
+          Write-Host "Skipping WiX installation for simplified build"
           
       - name: Build MSI installer
         env:

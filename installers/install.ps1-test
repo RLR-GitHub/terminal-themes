@@ -1,0 +1,44 @@
+# Test version of PowerShell installer for CI/CD
+param(
+    [switch]$Test
+)
+
+$Version = "3.0.0"
+$InstallDir = "$env:LOCALAPPDATA\RoryTerminal"
+$ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RootDir = Split-Path -Parent $ScriptRoot
+
+Write-Host "Rory Terminal Test Installation" -ForegroundColor Cyan
+Write-Host "Version: $Version" -ForegroundColor Green
+
+# Create directories
+New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+
+# Copy local files
+Write-Host "Copying files from local repository..." -ForegroundColor Blue
+
+$folders = @("core", "themes", "config")
+foreach ($folder in $folders) {
+    $source = Join-Path $RootDir $folder
+    if (Test-Path $source) {
+        Copy-Item -Path $source -Destination $InstallDir -Recurse -Force
+        Write-Host "✓ Copied $folder" -ForegroundColor Green
+    }
+}
+
+# Create dummy launcher
+$launcherPath = "$env:LOCALAPPDATA\Microsoft\WindowsApps\rory-terminal.cmd"
+$launcherDir = Split-Path -Parent $launcherPath
+if (-not (Test-Path $launcherDir)) {
+    New-Item -ItemType Directory -Path $launcherDir -Force | Out-Null
+}
+
+@"
+@echo off
+echo Rory Terminal (test installation)
+echo Version: $Version
+echo Installation: %LOCALAPPDATA%\RoryTerminal
+"@ | Out-File -FilePath $launcherPath -Encoding ASCII
+
+Write-Host "`n✓ Test installation completed successfully" -ForegroundColor Green
+Write-Host "Installation directory: $InstallDir" -ForegroundColor Cyan

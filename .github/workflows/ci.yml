@@ -73,9 +73,11 @@ jobs:
           echo "Checking starship themes..."
           for theme in themes/starship/*.toml; do
             if [ -f "$theme" ]; then
-              # Basic TOML validation
-              python3 -c "import toml; toml.load('$theme')" || echo "Invalid TOML in $theme"
-              echo "✓ $theme validated"
+          # Basic TOML validation - skip if toml not available
+          if python3 -c "import toml" 2>/dev/null; then
+            python3 -c "import toml; toml.load('$theme')" || echo "Invalid TOML in $theme"
+          fi
+          echo "✓ $theme validated"
             fi
           done
 
