@@ -7,8 +7,10 @@ set -e
 VERSION="3.0.0"
 PACKAGE_NAME="RoryTerminal"
 ARCH="x86_64"
-BUILD_DIR="$(pwd)/build/appimage"
-ROOT_DIR="$(pwd)/../../.."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+BUILD_DIR="${ROOT_DIR}/build/appimage"
+DIST_DIR="${ROOT_DIR}/dist/linux"
 APPDIR="${BUILD_DIR}/${PACKAGE_NAME}.AppDir"
 
 print_step() { echo "==> $1"; }
@@ -46,6 +48,8 @@ print_step "Copying files..."
 
 cp -r "${ROOT_DIR}/core" "${APPDIR}/usr/share/rory-terminal/"
 cp -r "${ROOT_DIR}/themes" "${APPDIR}/usr/share/rory-terminal/"
+cp -r "${ROOT_DIR}/config" "${APPDIR}/usr/share/rory-terminal/"
+cp -r "${ROOT_DIR}/installers/desktop" "${APPDIR}/usr/share/rory-terminal/"
 
 # Make scripts executable
 find "${APPDIR}/usr/share/rory-terminal" -name "*.sh" -exec chmod +x {} \;
@@ -137,8 +141,13 @@ chmod +x "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
 
 print_success "AppImage created: ${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
 
+# Create dist directory and copy AppImage
+mkdir -p "${DIST_DIR}"
+cp "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage" "${DIST_DIR}/"
+print_success "AppImage copied to: ${DIST_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
+
 print_success "AppImage build complete!"
 echo ""
-echo "Run with: ./${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
-echo "Or make it executable and run: chmod +x ${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage && ./${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
+echo "AppImage location: ${DIST_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
+echo "Run with: ${DIST_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"
 

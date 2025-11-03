@@ -6,8 +6,10 @@ set -e
 VERSION="3.0.0"
 PACKAGE_NAME="RoryTerminal"
 IDENTIFIER="com.rory.terminal-themes"
-BUILD_DIR="$(pwd)/build"
-ROOT_DIR="$(pwd)/../../.."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+BUILD_DIR="${ROOT_DIR}/build/macos"
+DIST_DIR="${ROOT_DIR}/dist/macos"
 PKG_ROOT="${BUILD_DIR}/pkgroot"
 SCRIPTS_DIR="${BUILD_DIR}/scripts"
 
@@ -37,7 +39,10 @@ print_step "Copying application files..."
 # Core modules
 cp -r "${ROOT_DIR}/core" "$PKG_ROOT/usr/local/share/rory-terminal/"
 cp -r "${ROOT_DIR}/themes" "$PKG_ROOT/usr/local/share/rory-terminal/"
-cp -r "${ROOT_DIR}/config" "$PKG_ROOT/usr/local/etc/rory-terminal/" 2>/dev/null || true
+if [[ -d "${ROOT_DIR}/config" ]]; then
+    cp -r "${ROOT_DIR}/config" "$PKG_ROOT/usr/local/share/rory-terminal/"
+fi
+cp -r "${ROOT_DIR}/installers/desktop" "$PKG_ROOT/usr/local/share/rory-terminal/"
 
 # Make scripts executable
 find "$PKG_ROOT/usr/local/share/rory-terminal" -name "*.sh" -exec chmod +x {} \;

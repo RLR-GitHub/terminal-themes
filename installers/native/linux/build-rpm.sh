@@ -7,8 +7,10 @@ VERSION="3.0.0"
 RELEASE="1"
 PACKAGE_NAME="rory-terminal"
 ARCH="noarch"
-BUILD_DIR="$(pwd)/build/rpm"
-ROOT_DIR="$(pwd)/../../.."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+BUILD_DIR="${ROOT_DIR}/build/rpm"
+DIST_DIR="${ROOT_DIR}/dist/linux"
 SPEC_FILE="${BUILD_DIR}/SPECS/${PACKAGE_NAME}.spec"
 
 print_step() { echo "==> $1"; }
@@ -36,12 +38,16 @@ print_success "RPM build structure created"
 print_step "Creating source tarball..."
 
 TARBALL="${BUILD_DIR}/SOURCES/${PACKAGE_NAME}-${VERSION}.tar.gz"
-tar czf "$TARBALL" -C "${ROOT_DIR}/.." \
-    --transform "s,^terminal-themes,${PACKAGE_NAME}-${VERSION}," \
-    terminal-themes/core \
-    terminal-themes/themes \
-    terminal-themes/LICENSE \
-    terminal-themes/README.md
+cd "${ROOT_DIR}"
+tar czf "$TARBALL" \
+    --transform "s,^,${PACKAGE_NAME}-${VERSION}/," \
+    core \
+    themes \
+    config \
+    installers/desktop \
+    LICENSE \
+    README.md
+cd - > /dev/null
 
 print_success "Source tarball created"
 
@@ -149,15 +155,23 @@ SRPM_FILE=$(find "${BUILD_DIR}/SRPMS" -name "*.rpm" | head -1)
 print_success "Binary RPM: $RPM_FILE"
 print_success "Source RPM: $SRPM_FILE"
 
+# Create dist directory and copy packages
+mkdir -p "${DIST_DIR}"
+if [[ -f "$RPM_FILE" ]]; then
+    cp "$RPM_FILE" "${DIST_DIR}/"
+    print_success "Package copied to: ${DIST_DIR}/$(basename "$RPM_FILE")"
+fi
+
 # Optional: Sign RPM
 if command -v rpmsign &> /dev/null && [[ -n "${GPG_KEY}" ]]; then
     print_step "Signing RPM..."
-    rpmsign --key-id="$GPG_KEY" --addsign "$RPM_FILE"
+    rpmsign --key-id="$GPG_KEY" --addsign "${DIST_DIR}/$(basename "$RPM_FILE")"
     print_success "RPM signed"
 fi
 
 print_success "RPM package build complete!"
 echo ""
-echo "Install with: sudo dnf install $RPM_FILE"
-echo "Or: sudo rpm -ivh $RPM_FILE"
+echo "Package location: ${DIST_DIR}/$(basename "$RPM_FILE")"
+echo "Install with: sudo dnf install ${DIST_DIR}/$(basename "$RPM_FILE")"
+echo "Or: sudo rpm -ivh ${DIST_DIR}/$(basename "$RPM_FILE")"
 

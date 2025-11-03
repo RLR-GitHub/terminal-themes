@@ -6,8 +6,10 @@ set -e
 VERSION="3.0.0"
 PACKAGE_NAME="rory-terminal"
 ARCH="all"
-BUILD_DIR="$(pwd)/build/deb"
-ROOT_DIR="$(pwd)/../../.."
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+BUILD_DIR="${ROOT_DIR}/build/deb"
+DIST_DIR="${ROOT_DIR}/dist/linux"
 DEB_ROOT="${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}"
 
 print_step() { echo "==> $1"; }
@@ -35,6 +37,8 @@ print_step "Copying files..."
 
 cp -r "${ROOT_DIR}/core" "${DEB_ROOT}/opt/rory-terminal/"
 cp -r "${ROOT_DIR}/themes" "${DEB_ROOT}/opt/rory-terminal/"
+cp -r "${ROOT_DIR}/config" "${DEB_ROOT}/opt/rory-terminal/"
+cp -r "${ROOT_DIR}/installers/desktop" "${DEB_ROOT}/opt/rory-terminal/"
 cp "${ROOT_DIR}/LICENSE" "${DEB_ROOT}/usr/share/doc/${PACKAGE_NAME}/"
 cp "${ROOT_DIR}/README.md" "${DEB_ROOT}/usr/share/doc/${PACKAGE_NAME}/"
 
@@ -123,22 +127,24 @@ chmod +x "${DEB_ROOT}/DEBIAN/prerm"
 
 print_success "Prerm script created"
 
-# Create desktop entry
-print_step "Creating desktop entry..."
+# Copy desktop entries
+print_step "Copying desktop entries..."
 
-cat > "${DEB_ROOT}/usr/share/applications/rory-terminal.desktop" << EOF
-[Desktop Entry]
-Type=Application
-Name=Rory Terminal Themes
-Comment=Cyberpunk terminal customization
-Exec=rory-theme
-Icon=utilities-terminal
-Terminal=true
-Categories=Utility;System;
-Keywords=terminal;theme;cyberpunk;matrix;
-EOF
+if [[ -f "${ROOT_DIR}/installers/desktop/rory-terminal.desktop" ]]; then
+    cp "${ROOT_DIR}/installers/desktop/rory-terminal.desktop" "${DEB_ROOT}/usr/share/applications/"
+fi
 
-print_success "Desktop entry created"
+if [[ -f "${ROOT_DIR}/installers/desktop/rory-matrix.desktop" ]]; then
+    cp "${ROOT_DIR}/installers/desktop/rory-matrix.desktop" "${DEB_ROOT}/usr/share/applications/"
+fi
+
+# Also copy launcher script
+if [[ -f "${ROOT_DIR}/installers/desktop/rory-terminal-launcher.sh" ]]; then
+    cp "${ROOT_DIR}/installers/desktop/rory-terminal-launcher.sh" "${DEB_ROOT}/usr/local/bin/"
+    chmod +x "${DEB_ROOT}/usr/local/bin/rory-terminal-launcher.sh"
+fi
+
+print_success "Desktop entries copied"
 
 # Create copyright file
 cat > "${DEB_ROOT}/usr/share/doc/${PACKAGE_NAME}/copyright" << 'EOF'
@@ -178,15 +184,21 @@ dpkg-deb --build --root-owner-group "${DEB_ROOT}" || {
 
 print_success "Package built: ${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
 
+# Create dist directory and copy package
+mkdir -p "${DIST_DIR}"
+cp "${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb" "${DIST_DIR}/"
+print_success "Package copied to: ${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+
 # Optional: Sign package
 if command -v dpkg-sig &> /dev/null && [[ -n "${GPG_KEY}" ]]; then
     print_step "Signing package..."
-    dpkg-sig -k "$GPG_KEY" --sign builder "${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+    dpkg-sig -k "$GPG_KEY" --sign builder "${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
     print_success "Package signed"
 fi
 
 print_success "Debian package build complete!"
 echo ""
-echo "Install with: sudo dpkg -i ${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
-echo "Or: sudo apt install ./${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+echo "Package location: ${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+echo "Install with: sudo dpkg -i ${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
+echo "Or: sudo apt install ./${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
 

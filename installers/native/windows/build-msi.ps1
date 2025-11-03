@@ -11,8 +11,10 @@ $ErrorActionPreference = "Stop"
 $PackageName = "RoryTerminal"
 $Manufacturer = "Rory"
 $UpgradeCode = "12345678-1234-1234-1234-123456789012"  # Generate new GUID for production
-$BuildDir = Join-Path $PSScriptRoot "build"
-$RootDir = Join-Path $PSScriptRoot "..\..\.."
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RootDir = (Get-Item "$ScriptDir\..\..\..").FullName
+$BuildDir = Join-Path $RootDir "build\msi"
+$DistDir = Join-Path $RootDir "dist\windows"
 $SourceDir = Join-Path $BuildDir "source"
 
 function Write-Step {
