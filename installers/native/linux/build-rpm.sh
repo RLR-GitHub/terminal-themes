@@ -170,7 +170,7 @@ if [[ -f "$RPM_FILE" ]]; then
 fi
 
 # Optional: Sign RPM
-if command -v rpmsign &> /dev/null && [[ -n "${GPG_KEY}" ]]; then
+if command -v rpmsign &> /dev/null && [[ -n "${GPG_KEY:-}" ]]; then
     print_step "Signing RPM..."
     rpmsign --key-id="$GPG_KEY" --addsign "${DIST_DIR}/$(basename "$RPM_FILE")"
     print_success "RPM signed"

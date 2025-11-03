@@ -197,7 +197,7 @@ cp "${BUILD_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb" "${DIST_DIR}/"
 print_success "Package copied to: ${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
 
 # Optional: Sign package
-if command -v dpkg-sig &> /dev/null && [[ -n "${GPG_KEY}" ]]; then
+if command -v dpkg-sig &> /dev/null && [[ -n "${GPG_KEY:-}" ]]; then
     print_step "Signing package..."
     dpkg-sig -k "$GPG_KEY" --sign builder "${DIST_DIR}/${PACKAGE_NAME}_${VERSION}_${ARCH}.deb"
     print_success "Package signed"
