@@ -75,6 +75,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Fixed GitHub Actions `test-install.yml` workflow matrix reference errors
+- Fixed impossible job dependency constraints in workflow
+- Added proper error handling for missing artifacts
+- Integrated package uninstall testing into installation tests
+- Improved Windows package testing with proper MSI uninstall
+
+### Changed
+- Test script installation jobs now only run on `workflow_dispatch` and `pull_request` events
+- Native package testing jobs now only run on `workflow_run` events
+- Removed redundant conditions in workflow steps
+- Consolidated install/uninstall testing into single jobs per platform
+
 ### Planned Features
 - [ ] Additional holiday themes (Valentine's, St. Patrick's, etc.)
 - [ ] Configuration file support (~/.matrixrc)

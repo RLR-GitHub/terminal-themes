@@ -12,6 +12,7 @@ on:
 
 jobs:
   test-script-install-linux:
+    if: github.event_name != 'workflow_run'
     strategy:
       matrix:
         distro: [ubuntu-latest, ubuntu-20.04]
@@ -45,6 +46,7 @@ jobs:
           fi
 
   test-script-install-macos:
+    if: github.event_name != 'workflow_run'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,6 +67,7 @@ jobs:
           fi
 
   test-script-install-windows:
+    if: github.event_name != 'workflow_run'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -111,8 +114,7 @@ jobs:
         shell: pwsh
 
   test-native-packages:
-    needs: [test-script-install-linux, test-script-install-macos, test-script-install-windows]
-    if: github.event.workflow_run.conclusion == 'success'
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -121,23 +123,29 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Download artifacts
-        if: github.event.workflow_run
         uses: actions/github-script@v7
+        env:
+          MATRIX_OS: ${{ matrix.os }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
         with:
           script: |
+            const matrixOs = process.env.MATRIX_OS;
+            const workflowRunId = process.env.WORKFLOW_RUN_ID;
+            
             const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              run_id: ${{ github.event.workflow_run.id }}
+              run_id: workflowRunId
             });
             
             const matchArtifact = artifacts.data.artifacts.find(artifact => {
-              if ('${{ matrix.os }}' == 'ubuntu-latest') return artifact.name.includes('linux-deb');
-              if ('${{ matrix.os }}' == 'macos-latest') return artifact.name.includes('macos-packages');
-              if ('${{ matrix.os }}' == 'windows-latest') return artifact.name.includes('windows-packages');
+              if (matrixOs == 'ubuntu-latest') return artifact.name.includes('linux-deb');
+              if (matrixOs == 'macos-latest') return artifact.name.includes('macos-packages');
+              if (matrixOs == 'windows-latest') return artifact.name.includes('windows-packages');
             });
             
             if (matchArtifact) {
+              console.log(`Found artifact: ${matchArtifact.name}`);
               const download = await github.rest.actions.downloadArtifact({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -146,13 +154,17 @@ jobs:
               });
               
               require('fs').writeFileSync('package.zip', Buffer.from(download.data));
+              console.log('Downloaded artifact successfully');
               
               // Extract based on OS
-              if ('${{ matrix.os }}' == 'windows-latest') {
+              if (matrixOs == 'windows-latest') {
                 await exec.exec('powershell', ['Expand-Archive', '-Path', 'package.zip', '-DestinationPath', '.']);
               } else {
                 await exec.exec('unzip', ['package.zip']);
               }
+            } else {
+              console.log('Available artifacts:', artifacts.data.artifacts.map(a => a.name).join(', '));
+              throw new Error(`No matching artifact found for ${matrixOs}. Expected artifact containing: ${matrixOs == 'ubuntu-latest' ? 'linux-deb' : matrixOs == 'macos-latest' ? 'macos-packages' : 'windows-packages'}`);
             }
             
       - name: Test package installation (Linux)
@@ -164,8 +176,25 @@ jobs:
             echo "Installing: $DEB_FILE"
             sudo dpkg -i "$DEB_FILE" || sudo apt-get install -f -y
             
-            # Verify
-            dpkg -l | grep rory-terminal && echo "✓ Package installed"
+            # Verify installation
+            if dpkg -l | grep -q rory-terminal; then
+              echo "✓ Package installed successfully"
+              
+              # Test uninstallation
+              echo "Testing uninstallation..."
+              sudo apt-get remove -y rory-terminal
+              
+              # Verify uninstallation
+              if dpkg -l | grep -q rory-terminal; then
+                echo "✗ Package uninstallation failed"
+                exit 1
+              else
+                echo "✓ Package uninstalled successfully"
+              fi
+            else
+              echo "✗ Package installation verification failed"
+              exit 1
+            fi
           else
             echo "No .deb package found to test"
           fi
@@ -179,8 +208,29 @@ jobs:
             echo "Installing: $PKG_FILE"
             sudo installer -pkg "$PKG_FILE" -target /
             
-            # Verify
-            [ -d "/Applications/RoryTerminal.app" ] && echo "✓ App installed"
+            # Verify installation
+            if [ -d "/Applications/RoryTerminal.app" ]; then
+              echo "✓ App installed successfully"
+              
+              # Test uninstallation
+              echo "Testing uninstallation..."
+              if [ -f "/Applications/RoryTerminal.app/Contents/Resources/uninstall.sh" ]; then
+                sudo /Applications/RoryTerminal.app/Contents/Resources/uninstall.sh
+              else
+                sudo rm -rf /Applications/RoryTerminal.app
+              fi
+              
+              # Verify uninstallation
+              if [ -d "/Applications/RoryTerminal.app" ]; then
+                echo "✗ App uninstallation failed"
+                exit 1
+              else
+                echo "✓ App uninstalled successfully"
+              fi
+            else
+              echo "✗ App installation verification failed"
+              exit 1
+            fi
           else
             echo "No .pkg package found to test"
           fi
@@ -192,54 +242,39 @@ jobs:
           $msiFile = Get-ChildItem -Filter "*.msi" -Recurse | Select-Object -First 1
           if ($msiFile) {
             Write-Host "Installing: $($msiFile.FullName)"
-            Start-Process msiexec.exe -ArgumentList "/i", $msiFile.FullName, "/quiet", "/norestart" -Wait
+            $result = Start-Process msiexec.exe -ArgumentList "/i", $msiFile.FullName, "/quiet", "/norestart" -Wait -PassThru
             
-            # Verify
-            if (Test-Path "$env:PROGRAMFILES\RoryTerminal") {
-              Write-Host "✓ Package installed"
+            if ($result.ExitCode -eq 0) {
+              # Verify installation
+              if (Test-Path "$env:PROGRAMFILES\RoryTerminal") {
+                Write-Host "✓ Package installed successfully"
+                
+                # Test uninstallation using MSI
+                Write-Host "Testing uninstallation..."
+                $uninstallResult = Start-Process msiexec.exe -ArgumentList "/x", $msiFile.FullName, "/quiet", "/norestart" -Wait -PassThru
+                
+                if ($uninstallResult.ExitCode -eq 0) {
+                  # Verify uninstallation
+                  Start-Sleep -Seconds 2  # Give Windows time to clean up
+                  if (-not (Test-Path "$env:PROGRAMFILES\RoryTerminal")) {
+                    Write-Host "✓ Package uninstalled successfully"
+                  } else {
+                    Write-Host "✗ Package uninstallation failed - directory still exists"
+                    exit 1
+                  }
+                } else {
+                  Write-Host "✗ Package uninstallation failed with exit code: $($uninstallResult.ExitCode)"
+                  exit 1
+                }
+              } else {
+                Write-Host "✗ Package installation verification failed - directory not found"
+                exit 1
+              }
+            } else {
+              Write-Host "✗ Package installation failed with exit code: $($result.ExitCode)"
+              exit 1
             }
           } else {
             Write-Host "No .msi package found to test"
           }
-        shell: pwsh
-
-  test-uninstall:
-    needs: test-native-packages
-    if: always()
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Test uninstall (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          # Try to uninstall if installed
-          sudo apt-get remove -y rory-terminal 2>/dev/null || true
-          sudo rm -rf /opt/rory-terminal ~/.local/share/rory-terminal
-          
-      - name: Test uninstall (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          # Run uninstall script if it exists
-          if [ -f "/Applications/RoryTerminal.app/Contents/Resources/uninstall.sh" ]; then
-            sudo /Applications/RoryTerminal.app/Contents/Resources/uninstall.sh
-          else
-            sudo rm -rf /Applications/RoryTerminal.app /opt/rory-terminal
-          fi
-          
-      - name: Test uninstall (Windows)
-        if: runner.os == 'Windows'
-        run: |
-          # Try to uninstall via MSI
-          $product = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Rory*Terminal*" }
-          if ($product) {
-            $product.Uninstall()
-          }
-          
-          # Clean up directories
-          Remove-Item -Path "$env:PROGRAMFILES\RoryTerminal" -Recurse -Force -ErrorAction SilentlyContinue
-          Remove-Item -Path "$env:LOCALAPPDATA\RoryTerminal" -Recurse -Force -ErrorAction SilentlyContinue
         shell: pwsh

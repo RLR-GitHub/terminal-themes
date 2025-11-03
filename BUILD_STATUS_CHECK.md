@@ -51,8 +51,10 @@
 - Creates comprehensive release notes
 
 **Test Installation** (`test-install.yml`)
-- Tests installers on multiple platforms
-- Validates package functionality
+- **Script Testing:** Tests installation scripts on `workflow_dispatch` and `pull_request` events
+- **Package Testing:** Tests built packages on `workflow_run` events (triggered by Build Native Packages)
+- **Integrated Testing:** Each platform tests installation AND uninstallation in a single job
+- **Error Handling:** Proper artifact download error handling with helpful debug info
 
 ## 📦 Package Output Locations
 
