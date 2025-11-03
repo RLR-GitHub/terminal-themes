@@ -121,8 +121,8 @@ jobs:
         env:
           VERSION: ${{ needs.set-version.outputs.version }}
         run: |
-          # Skip app bundle for now - needs code signing
-          echo "Skipping macOS app bundle (requires code signing)"
+          # Build app bundle with version parameter
+          ./installers/native/macos/build-app-bundle.sh "$VERSION"
         
       - name: Build pkg installer
         env:
