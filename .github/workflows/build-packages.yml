@@ -38,16 +38,19 @@ jobs:
       - name: Build DEB package
         run: |
           cd installers/native/linux
+          chmod +x build-deb.sh
           ./build-deb.sh
           
       - name: Build RPM package  
         run: |
           cd installers/native/linux
+          chmod +x build-rpm.sh
           ./build-rpm.sh
           
       - name: Build AppImage
         run: |
           cd installers/native/linux
+          chmod +x build-appimage.sh
           ./build-appimage.sh
           
       - name: Build Snap package
@@ -79,11 +82,13 @@ jobs:
       - name: Build PKG installer
         run: |
           cd installers/native/macos
+          chmod +x build-pkg.sh
           ./build-pkg.sh
           
       - name: Build App Bundle and DMG
         run: |
           cd installers/native/macos
+          chmod +x build-app-bundle.sh
           ./build-app-bundle.sh
           
       - name: Sign packages (if certificate available)
