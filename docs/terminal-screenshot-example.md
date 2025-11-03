@@ -6,22 +6,13 @@ This is what you see when you launch Rory Terminal with the Hacker theme:
 [2J[H[?25l
 [38;5;46m  >
 
-  #      ######    ######   #    #  #####
-   #     #     #  #     #  #    # #
-    #    #     #  #     #  #   #  #
-     #   ######   #     #  #####   #####
-      #  #   #    #     #  #   #       #
-  #    # #    #   #     #  #    #      #
-   #  #  #     #  ######   #     #  #####
-
-
-  #     #    #     #   ######   #   #      
-  ##   ##   ##    ##       #    #   #      
-  # # # #  #  #  #  #       #    #   #      
-  #  #  # #  # #  #  #      #    #    #     
-  #     # #   #   #  #       #    #     #     
-  #     # #     #  #  #       #    #     #     
-  #     # #     #   ######   #    #     #     [0m
+  ######     ######    ######   #    #      
+  #     #   #     #   #     #  #    #      
+  #     #   #     #   #     #  #   #       
+  ######    #     #   ######    ####        
+  #   #     #     #   #   #      #   #       
+  #    #    #     #   #    #     #    #      
+  #     #   ######    #     #    #    #      [0m
 
 [10;30H[38;5;82mr[0m
 [11;45H[38;5;84m0[0m
@@ -42,7 +33,7 @@ This is what you see when you launch Rory Terminal with the Hacker theme:
 ```
 
 The animation features:
-- ASCII art header "> RORYS MAZE" in bright green
+- ASCII art header "> RORY" in bright green
 - Falling characters including "r0ry.computer" branding
 - Japanese katakana characters mixed with alphanumerics
 - Random red alerts like "ROOT ACCESS"
