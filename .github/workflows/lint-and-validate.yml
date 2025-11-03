@@ -140,7 +140,6 @@ jobs:
       
       - name: Lint Markdown files
         uses: DavidAnson/markdownlint-cli2-action@v14
-        continue-on-error: true
         with:
           globs: |
             **/*.md

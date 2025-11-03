@@ -1,0 +1,83 @@
+name: Create Release on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Build packages
+        run: |
+          chmod +x .github/build-helpers/build-all-simple.sh
+          VERSION="${{ steps.version.outputs.version }}" .github/build-helpers/build-all-simple.sh
+      
+      - name: Create Release Notes
+        run: |
+          cat > RELEASE_NOTES.md << 'EOF'
+          # Rory Terminal ${{ steps.version.outputs.version }}
+          
+          ## 🚀 Quick Installation
+          
+          ### Unix/Linux/macOS
+          ```bash
+          curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+          ```
+          
+          ### Windows PowerShell
+          ```powershell
+          iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
+          ```
+          
+          ## 📦 Package Downloads
+          
+          ### Cross-Platform
+          - `rory-terminal-${{ steps.version.outputs.version }}-universal.zip` - Works on all platforms
+          
+          ### Linux
+          - `rory-terminal_${{ steps.version.outputs.version }}_all.deb.tar.gz` - Debian/Ubuntu structure
+          - `RoryTerminal-${{ steps.version.outputs.version }}-x86_64.AppImage.tar.gz` - AppImage structure
+          
+          ### macOS  
+          - `RoryTerminal-${{ steps.version.outputs.version }}-macOS.zip` - macOS application
+          
+          ### Windows
+          - `RoryTerminal-${{ steps.version.outputs.version }}-Windows.zip` - Windows package
+          
+          ## ✨ What's New
+          
+          See [CHANGELOG](https://github.com/RLR-GitHub/terminal-themes/blob/main/docs/CHANGELOG.md) for details.
+          
+          ## 📚 Documentation
+          
+          - [Quick Start Guide](https://github.com/RLR-GitHub/terminal-themes/blob/main/docs/QUICKSTART.md)
+          - [Linux Guide](https://github.com/RLR-GitHub/terminal-themes/blob/main/docs/LINUX.md)
+          - [macOS Guide](https://github.com/RLR-GitHub/terminal-themes/blob/main/docs/MACOS.md)
+          - [Windows Guide](https://github.com/RLR-GitHub/terminal-themes/blob/main/docs/WINDOWS.md)
+          EOF
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Rory Terminal ${{ steps.version.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: |
+            dist/**/*.zip
+            dist/**/*.tar.gz
+            dist/SHA256SUMS
+          draft: false
+          prerelease: false
