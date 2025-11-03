@@ -1,0 +1,42 @@
+name: Build Minimal Packages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-universal:
+    name: Build Universal Package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set version
+        id: version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          if [[ ! "$VERSION" =~ ^[0-9] ]]; then
+            VERSION="3.0.0"
+          fi
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+      
+      - name: Build universal package
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          mkdir -p dist/universal
+          
+          # Create universal zip
+          zip -r "dist/universal/rory-terminal-${VERSION}-universal.zip" \
+            core themes config installers docs README.md LICENSE \
+            -x "*.git*" "*/.DS_Store" "*/dist/*" "*/.github/*" "*/build/*"
+          
+          ls -la dist/universal/
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: universal-package
+          path: dist/universal/*.zip

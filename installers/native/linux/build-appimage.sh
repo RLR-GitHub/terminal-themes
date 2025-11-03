@@ -138,9 +138,17 @@ print_success "Icon created"
 # Build AppImage
 print_step "Building AppImage..."
 
-ARCH=$ARCH $APPIMAGETOOL "${APPDIR}" "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage" || {
-    print_error "AppImage build failed"
-}
+# Check if we're in GitHub Actions (no FUSE support)
+if [ -n "$GITHUB_ACTIONS" ]; then
+    print_step "Detected GitHub Actions environment - using extracted appimagetool"
+    appimagetool "${APPDIR}" "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage" || {
+        print_error "AppImage build failed"
+    }
+else
+    ARCH=$ARCH $APPIMAGETOOL "${APPDIR}" "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage" || {
+        print_error "AppImage build failed"
+    }
+fi
 
 # Make AppImage executable
 chmod +x "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-${ARCH}.AppImage"

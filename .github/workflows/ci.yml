@@ -135,36 +135,41 @@ jobs:
           done
           
           # Check theme references in themes.json
-          python3 - << 'EOF'
-          import json
-          import sys
-          import os
-          
-          with open('config/themes.json', 'r') as f:
-              themes_config = json.load(f)
-          
-          errors = []
-          for theme in themes_config['themes']:
-              theme_name = theme['name']
-              print(f"Checking theme: {theme_name}")
-              
-              # Check if theme files exist
-              for shell_type, filename in theme['files'].items():
-                  if filename and filename != "N/A":
-                      file_path = f"themes/{shell_type}/{filename}"
-                      if not os.path.exists(file_path):
-                          errors.append(f"Missing file for {theme_name}: {file_path}")
-                      else:
-                          print(f"  ✓ {file_path}")
-          
-          if errors:
-              print("\n❌ Errors found:")
-              for error in errors:
-                  print(f"  - {error}")
-              sys.exit(1)
-          else:
-              print("\n✅ All theme files validated successfully")
-          EOF
+          if [ -f "config/themes.json" ]; then
+              python3 - << 'EOF'
+import json
+import sys
+import os
+
+with open('config/themes.json', 'r') as f:
+    themes_config = json.load(f)
+
+errors = []
+for theme in themes_config['themes']:
+    theme_name = theme['name']
+    print(f"Checking theme: {theme_name}")
+    
+    # Check if theme files exist
+    for shell_type, filename in theme.get('files', {}).items():
+        if filename and filename != "N/A":
+            file_path = f"themes/{shell_type}/{filename}"
+            if not os.path.exists(file_path):
+                errors.append(f"Missing file for {theme_name}: {file_path}")
+            else:
+                print(f"  ✓ {file_path}")
+
+if errors:
+    print("\n❌ Errors found:")
+    for error in errors:
+        print(f"  - {error}")
+    sys.exit(1)
+else:
+    print("\n✅ All theme files validated successfully")
+EOF
+          else
+              echo "⚠️  config/themes.json not found"
+              exit 1
+          fi
 
   documentation-check:
     runs-on: ubuntu-latest

@@ -35,8 +35,11 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
+          # Ensure we're in the right directory
+          cd "${{ github.workspace }}"
+          
           # Create directories
-          mkdir -p dist/{linux,macos,windows,universal}
+          mkdir -p dist/linux dist/macos dist/windows dist/universal
           
           # Create universal zip
           echo "Creating universal zip..."
@@ -83,7 +86,7 @@ jobs:
           chmod +x "$DEB_DIR/usr/local/bin/rory-terminal"
           
           # Package as tar.gz since we don't have dpkg-deb
-          tar czf "dist/linux/rory-terminal_${VERSION}_all.deb.tar.gz" -C "$DEB_DIR" .
+          cd "$DEB_DIR" && tar czf "../../linux/rory-terminal_${VERSION}_all.deb.tar.gz" . && cd -
           
           echo "Build completed successfully!"
           ls -la dist/universal/
