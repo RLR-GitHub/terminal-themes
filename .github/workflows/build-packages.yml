@@ -1,0 +1,195 @@
+name: Build Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build (e.g., 3.0.0)'
+        required: true
+        default: '3.0.0'
+
+env:
+  VERSION: ${{ github.event.inputs.version || github.ref_name }}
+
+jobs:
+  build-linux:
+    name: Build Linux Packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            debhelper \
+            devscripts \
+            rpm \
+            snapd \
+            flatpak \
+            flatpak-builder
+      
+      - name: Build DEB package
+        run: |
+          cd installers/native/linux
+          ./build-deb.sh
+          
+      - name: Build RPM package  
+        run: |
+          cd installers/native/linux
+          ./build-rpm.sh
+          
+      - name: Build AppImage
+        run: |
+          cd installers/native/linux
+          ./build-appimage.sh
+          
+      - name: Build Snap package
+        run: |
+          sudo snap install snapcraft --classic
+          cd installers/native/linux/snap
+          snapcraft
+          
+      - name: Upload Linux packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: linux-packages
+          path: |
+            dist/linux/*.deb
+            dist/linux/*.rpm
+            dist/linux/*.AppImage
+            installers/native/linux/snap/*.snap
+
+  build-macos:
+    name: Build macOS Packages
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          brew install create-dmg
+          
+      - name: Build PKG installer
+        run: |
+          cd installers/native/macos
+          ./build-pkg.sh
+          
+      - name: Build App Bundle and DMG
+        run: |
+          cd installers/native/macos
+          ./build-app-bundle.sh
+          
+      - name: Sign packages (if certificate available)
+        if: ${{ env.MACOS_CERTIFICATE }}
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+        run: |
+          echo "Code signing would happen here"
+          # codesign --deep --force --verify --verbose \
+          #   --sign "$MACOS_CERTIFICATE" \
+          #   dist/macos/*.app dist/macos/*.pkg
+          
+      - name: Upload macOS packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: macos-packages
+          path: |
+            dist/macos/*.pkg
+            dist/macos/*.dmg
+
+  build-windows:
+    name: Build Windows Packages
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install WiX Toolset
+        run: |
+          choco install wixtoolset -y
+          
+      - name: Build MSI installer
+        shell: powershell
+        run: |
+          cd installers/native/windows
+          .\build-msi.ps1 -Version $env:VERSION
+          
+      - name: Build Chocolatey package
+        shell: powershell
+        run: |
+          cd installers/native/windows
+          .\build-packages.ps1 -Version $env:VERSION -Chocolatey
+          
+      - name: Sign packages (if certificate available)
+        if: ${{ env.WINDOWS_CERTIFICATE }}
+        shell: powershell
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PWD: ${{ secrets.WINDOWS_CERTIFICATE_PWD }}
+        run: |
+          Write-Host "Code signing would happen here"
+          # signtool sign /f cert.pfx /p $env:WINDOWS_CERTIFICATE_PWD dist\windows\*.msi
+          
+      - name: Upload Windows packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: windows-packages
+          path: |
+            dist/windows/*.msi
+            dist/windows/*.nupkg
+
+  build-universal:
+    name: Build Universal Archives
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Create source tarball
+        run: |
+          mkdir -p dist/source
+          git archive --format=tar.gz --prefix=rory-terminal-$VERSION/ \
+            -o dist/source/rory-terminal-$VERSION.tar.gz HEAD
+            
+      - name: Create universal zip
+        run: |
+          mkdir -p dist/universal
+          zip -r dist/universal/rory-terminal-$VERSION-universal.zip \
+            core themes config installers docs README.md LICENSE \
+            -x "*.git*" "*/.DS_Store" "*/build/*" "*/dist/*"
+            
+      - name: Upload universal packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: universal-packages
+          path: |
+            dist/source/*.tar.gz
+            dist/universal/*.zip
+
+  create-checksums:
+    name: Generate Checksums
+    needs: [build-linux, build-macos, build-windows, build-universal]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        
+      - name: Generate checksums
+        run: |
+          mkdir -p checksums
+          find . -type f \( -name "*.deb" -o -name "*.rpm" -o -name "*.AppImage" \
+            -o -name "*.snap" -o -name "*.pkg" -o -name "*.dmg" \
+            -o -name "*.msi" -o -name "*.nupkg" -o -name "*.tar.gz" \
+            -o -name "*.zip" \) -exec sha256sum {} \; > checksums/SHA256SUMS
+          
+      - name: Upload checksums
+        uses: actions/upload-artifact@v3
+        with:
+          name: checksums
+          path: checksums/SHA256SUMS

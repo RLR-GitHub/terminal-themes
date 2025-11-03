@@ -1,0 +1,91 @@
+PackageIdentifier: RLR-GitHub.RoryTerminal
+PackageVersion: 3.0.0
+PackageName: Rory Terminal
+Publisher: Roderick Lawrence Renwick
+Author: Roderick Lawrence Renwick
+License: MIT
+LicenseUrl: https://github.com/RLR-GitHub/terminal-themes/blob/main/LICENSE
+Copyright: Copyright (c) 2024 Roderick Lawrence Renwick
+CopyrightUrl: https://github.com/RLR-GitHub/terminal-themes/blob/main/LICENSE
+ShortDescription: Cyberpunk terminal themes with Matrix animations
+Description: |
+  Rory Terminal provides Matrix-style terminal animations and modern terminal 
+  customization with Starship integration. Transform your terminal experience 
+  with cyberpunk aesthetics!
+  
+  Features:
+  - 5 Unique Themes: Halloween, Christmas, Easter, Hacker, and Matrix
+  - Matrix Rain Animations with theme-specific colors and symbols
+  - Starship Prompt Integration for modern, fast, and customizable prompts
+  - Windows Terminal Integration with automatic profile and color scheme setup
+  - PowerShell Module for easy theme management
+  - GUI Theme Selector for visual theme selection and preview
+  - Cross-Platform support for Windows, macOS, and Linux
+Homepage: https://github.com/RLR-GitHub/terminal-themes
+Tags:
+  - terminal
+  - theme
+  - cyberpunk
+  - matrix
+  - customization
+  - powershell
+  - windows-terminal
+  - starship
+  - developer-tools
+  - cli
+Platform:
+  - Windows.Desktop
+MinimumOSVersion: 10.0.0.0
+Dependencies:
+  WindowsFeatures:
+    - PowerShell
+InstallerType: msi
+Installers:
+  - Architecture: x64
+    InstallerUrl: https://github.com/RLR-GitHub/terminal-themes/releases/download/v3.0.0/rory-terminal-3.0.0-x64.msi
+    InstallerSha256: PLACEHOLDER_SHA256
+    InstallerSwitches:
+      Silent: /quiet
+      SilentWithProgress: /passive
+      InstallLocation: INSTALLDIR="<INSTALLPATH>"
+    Scope: machine
+    ProductCode: '{12345678-1234-5678-1234-567812345678}'
+    UpgradeBehavior: install
+  - Architecture: x86
+    InstallerUrl: https://github.com/RLR-GitHub/terminal-themes/releases/download/v3.0.0/rory-terminal-3.0.0-x86.msi
+    InstallerSha256: PLACEHOLDER_SHA256_X86
+    InstallerSwitches:
+      Silent: /quiet
+      SilentWithProgress: /passive
+      InstallLocation: INSTALLDIR="<INSTALLPATH>"
+    Scope: machine
+    ProductCode: '{87654321-4321-8765-4321-876543210987}'
+    UpgradeBehavior: install
+Commands:
+  - rory-terminal
+  - Get-RoryTheme
+  - Set-RoryTheme
+  - Start-RoryMatrix
+FileExtensions:
+  - .rory-theme
+Protocols:
+  - rory-terminal
+Capabilities:
+  - TerminalCustomization
+  - ThemeManagement
+  - AnimationRendering
+InstallModes:
+  - interactive
+  - silent
+  - silentWithProgress
+ReleaseNotes: |
+  Version 3.0.0
+  - Complete rewrite as universal terminal platform
+  - Added PowerShell module for easy management
+  - Windows Terminal automatic integration
+  - GUI theme selector
+  - 5 cyberpunk themes with Matrix animations
+  - Cross-platform support
+ReleaseNotesUrl: https://github.com/RLR-GitHub/terminal-themes/releases/tag/v3.0.0
+ManifestType: singleton
+ManifestVersion: 1.4.0

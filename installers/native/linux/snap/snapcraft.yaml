@@ -1,0 +1,93 @@
+name: rory-terminal
+version: '3.0.0'
+summary: Cyberpunk terminal themes with Matrix animations
+description: |
+  Rory Terminal provides Matrix-style terminal animations and modern terminal
+  customization with Starship integration. Features 5 unique themes (Halloween,
+  Christmas, Easter, Hacker, Matrix) with cross-platform compatibility.
+  
+  Features:
+  - Matrix rain animations with theme-specific colors
+  - Starship prompt integration
+  - Modern terminal tools (eza, bat, delta)
+  - GUI theme selector
+  - Command-line and desktop launcher support
+
+base: core22
+grade: stable
+confinement: classic
+
+architectures:
+  - build-on: amd64
+  - build-on: arm64
+  - build-on: armhf
+
+apps:
+  rory-terminal:
+    command: bin/rory-terminal-launcher.sh
+    desktop: share/applications/rory-terminal.desktop
+    
+  rory-matrix:
+    command: bin/rory-terminal-launcher.sh --matrix
+    desktop: share/applications/rory-matrix.desktop
+    
+  theme-manager:
+    command: opt/rory-terminal/core/option1-starship/theme-manager.sh
+    
+  theme-selector:
+    command: bin/theme-selector.py
+    extensions: [gnome]
+
+parts:
+  rory-terminal:
+    plugin: dump
+    source: ../../../
+    stage-packages:
+      - bash
+      - coreutils
+      - git
+      - python3
+      - python3-tk
+      - zenity
+      - libnotify-bin
+      
+    override-build: |
+      # Copy application files
+      mkdir -p $SNAPCRAFT_PART_INSTALL/opt/rory-terminal
+      cp -r core themes config $SNAPCRAFT_PART_INSTALL/opt/rory-terminal/
+      
+      # Copy desktop files
+      mkdir -p $SNAPCRAFT_PART_INSTALL/share/applications
+      cp installers/desktop/*.desktop $SNAPCRAFT_PART_INSTALL/share/applications/
+      
+      # Copy launcher scripts
+      mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+      cp installers/desktop/rory-terminal-launcher.sh $SNAPCRAFT_PART_INSTALL/bin/
+      cp installers/desktop/theme-selector.py $SNAPCRAFT_PART_INSTALL/bin/
+      cp installers/desktop/theme-selector-zenity.sh $SNAPCRAFT_PART_INSTALL/bin/
+      chmod +x $SNAPCRAFT_PART_INSTALL/bin/*
+      
+      # Copy icons
+      mkdir -p $SNAPCRAFT_PART_INSTALL/share/icons/hicolor/256x256/apps
+      # Icon would be copied here if we had one
+      
+      # Update paths in scripts for snap environment
+      sed -i 's|/opt/rory-terminal|$SNAP/opt/rory-terminal|g' $SNAPCRAFT_PART_INSTALL/bin/*
+      sed -i 's|~/.local/share/rory-terminal|$SNAP/opt/rory-terminal|g' $SNAPCRAFT_PART_INSTALL/bin/*
+      
+  starship:
+    plugin: nil
+    override-build: |
+      # Download and install starship
+      curl -sS https://starship.rs/install.sh | sh -s -- -y -b $SNAPCRAFT_PART_INSTALL/bin
+      
+  modern-tools:
+    plugin: nil
+    stage-packages:
+      - bat
+      - git-delta
+    override-build: |
+      # Try to install eza if available
+      if command -v cargo >/dev/null 2>&1; then
+        cargo install eza --root $SNAPCRAFT_PART_INSTALL
+      fi

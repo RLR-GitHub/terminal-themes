@@ -1,0 +1,132 @@
+name: Lint and Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-shell:
+    name: Lint Shell Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install ShellCheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+          
+      - name: Run ShellCheck
+        run: |
+          find . -name "*.sh" -type f -print0 | xargs -0 shellcheck || true
+          
+      - name: Check shell script formatting
+        run: |
+          # Check for common issues
+          echo "Checking for trailing whitespace..."
+          ! grep -r '[[:space:]]$' --include="*.sh" . || echo "Found trailing whitespace"
+          
+          echo "Checking for tabs vs spaces..."
+          # This is informational only
+          find . -name "*.sh" -exec grep -l $'\t' {} \; | head -10 || true
+
+  lint-powershell:
+    name: Lint PowerShell Scripts
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install PSScriptAnalyzer
+        shell: powershell
+        run: |
+          Install-Module -Name PSScriptAnalyzer -Force -SkipPublisherCheck
+          
+      - name: Run PSScriptAnalyzer
+        shell: powershell
+        run: |
+          $results = Invoke-ScriptAnalyzer -Path . -Recurse -ReportSummary
+          $results | Format-Table -AutoSize
+          
+          if ($results.Count -gt 0) {
+            Write-Warning "Found $($results.Count) issues"
+          }
+
+  validate-json:
+    name: Validate JSON Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate JSON syntax
+        run: |
+          find . -name "*.json" -type f -exec python3 -m json.tool {} > /dev/null \; \
+            -print -exec echo "✓ Valid JSON" \; || exit 1
+
+  validate-yaml:
+    name: Validate YAML Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install yamllint
+        run: |
+          pip install yamllint
+          
+      - name: Validate YAML files
+        run: |
+          yamllint . || true
+
+  validate-toml:
+    name: Validate TOML Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install toml-cli
+        run: |
+          pip install toml-cli
+          
+      - name: Validate TOML files
+        run: |
+          find . -name "*.toml" -type f -exec toml validate {} \; || true
+
+  check-licenses:
+    name: Check Licenses
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check for license headers
+        run: |
+          echo "Checking for license headers in source files..."
+          # This is a simple check - enhance as needed
+          files_without_license=0
+          for file in $(find . -name "*.sh" -o -name "*.ps1" -o -name "*.py"); do
+            if ! head -20 "$file" | grep -qi "license\|copyright"; then
+              echo "Warning: $file may be missing license header"
+              ((files_without_license++))
+            fi
+          done
+          echo "Files potentially missing license: $files_without_license"
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'

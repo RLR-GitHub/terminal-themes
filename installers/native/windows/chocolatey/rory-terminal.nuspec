@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>rory-terminal</id>
+    <version>3.0.0</version>
+    <packageSourceUrl>https://github.com/RLR-GitHub/terminal-themes</packageSourceUrl>
+    <owners>RLR-GitHub</owners>
+    <title>Rory Terminal</title>
+    <authors>Roderick Lawrence Renwick</authors>
+    <projectUrl>https://github.com/RLR-GitHub/terminal-themes</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/assets/icon.png</iconUrl>
+    <copyright>2024 Roderick Lawrence Renwick</copyright>
+    <licenseUrl>https://github.com/RLR-GitHub/terminal-themes/blob/main/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/RLR-GitHub/terminal-themes</projectSourceUrl>
+    <docsUrl>https://github.com/RLR-GitHub/terminal-themes/wiki</docsUrl>
+    <mailingListUrl>https://github.com/RLR-GitHub/terminal-themes/discussions</mailingListUrl>
+    <bugTrackerUrl>https://github.com/RLR-GitHub/terminal-themes/issues</bugTrackerUrl>
+    <tags>terminal theme cyberpunk matrix customization powershell windows-terminal starship</tags>
+    <summary>Cyberpunk terminal themes with Matrix animations</summary>
+    <description>
+# Rory Terminal
+
+Rory Terminal provides Matrix-style terminal animations and modern terminal customization with Starship integration. Transform your terminal experience with cyberpunk aesthetics!
+
+## Features
+
+- **5 Unique Themes**: Halloween, Christmas, Easter, Hacker, and Matrix
+- **Matrix Rain Animations**: Theme-specific colors and symbols
+- **Starship Prompt Integration**: Modern, fast, and customizable prompts
+- **Windows Terminal Integration**: Automatic profile and color scheme setup
+- **PowerShell Module**: Easy theme management with cmdlets
+- **GUI Theme Selector**: Visual theme selection and preview
+- **Cross-Platform**: Works on Windows, macOS, and Linux
+
+## Quick Start
+
+After installation, use the following PowerShell commands:
+
+```powershell
+# Import the module (added automatically to profile)
+Import-Module RoryTerminal
+
+# See available themes
+Get-RoryTheme
+
+# Change theme
+Set-RoryTheme -Name hacker
+
+# Run Matrix animation
+Start-RoryMatrix -Theme halloween
+
+# Open GUI selector
+Show-RoryThemeSelector
+```
+
+## Windows Terminal Integration
+
+The installer automatically configures Windows Terminal with:
+- Custom Rory Terminal profile
+- All 5 color schemes
+- Keyboard shortcuts (Ctrl+Alt+R for new Rory tab)
+
+## What's Included
+
+- PowerShell module with theme management cmdlets
+- Matrix animation scripts for all themes
+- Starship configurations
+- Windows Terminal integration
+- Desktop and Start Menu shortcuts
+- Theme selector GUI
+
+## Requirements
+
+- PowerShell 5.1 or higher
+- Windows Terminal (recommended)
+- Starship (optional, for enhanced prompts)
+    </description>
+    <releaseNotes>
+## Version 3.0.0
+- Complete rewrite as universal terminal platform
+- Added PowerShell module for easy management
+- Windows Terminal automatic integration
+- GUI theme selector
+- 5 cyberpunk themes with Matrix animations
+- Cross-platform support
+    </releaseNotes>
+    <dependencies>
+      <dependency id="powershell-core" version="7.0.0" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>

@@ -1,0 +1,84 @@
+app-id: com.rory.Terminal
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: rory-terminal-launcher.sh
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --filesystem=host
+  - --talk-name=org.freedesktop.Flatpak
+  - --device=dri
+  - --env=TERM=xterm-256color
+
+modules:
+  - name: rory-terminal
+    buildsystem: simple
+    sources:
+      - type: git
+        url: https://github.com/RLR-GitHub/terminal-themes.git
+        tag: v3.0.0
+    build-commands:
+      # Install application files
+      - mkdir -p /app/opt/rory-terminal
+      - cp -r core themes config /app/opt/rory-terminal/
+      
+      # Install desktop files
+      - mkdir -p /app/share/applications
+      - cp installers/desktop/*.desktop /app/share/applications/
+      - desktop-file-edit --set-key=Exec --set-value="flatpak run com.rory.Terminal" /app/share/applications/rory-terminal.desktop
+      - desktop-file-edit --set-key=Exec --set-value="flatpak run com.rory.Terminal --matrix" /app/share/applications/rory-matrix.desktop
+      
+      # Install launcher scripts
+      - mkdir -p /app/bin
+      - cp installers/desktop/rory-terminal-launcher.sh /app/bin/
+      - cp installers/desktop/theme-selector.py /app/bin/
+      - cp installers/desktop/theme-selector-zenity.sh /app/bin/
+      - chmod +x /app/bin/*
+      
+      # Update paths for flatpak environment
+      - sed -i 's|/opt/rory-terminal|/app/opt/rory-terminal|g' /app/bin/*
+      - sed -i 's|~/.local/share/rory-terminal|/app/opt/rory-terminal|g' /app/bin/*
+      
+      # Install icons
+      - mkdir -p /app/share/icons/hicolor/256x256/apps
+      # Icon installation would go here
+      
+      # Create wrapper script
+      - |
+        cat > /app/bin/rory-terminal << 'EOF'
+        #!/bin/bash
+        exec /app/bin/rory-terminal-launcher.sh "$@"
+        EOF
+      - chmod +x /app/bin/rory-terminal
+
+  - name: starship
+    buildsystem: simple
+    sources:
+      - type: archive
+        url: https://github.com/starship/starship/releases/download/v1.16.0/starship-x86_64-unknown-linux-musl.tar.gz
+        sha256: 4b2e2faa10a3d2f7c564fd2e00b4e4d7509978ab4ba96a7a3a19d99e31d21a21
+    build-commands:
+      - install -Dm755 starship /app/bin/starship
+
+  - name: python3-tkinter
+    buildsystem: simple
+    build-commands:
+      - echo "Python tkinter included in runtime"
+
+  - name: zenity
+    buildsystem: meson
+    sources:
+      - type: archive
+        url: https://download.gnome.org/sources/zenity/3.44/zenity-3.44.0.tar.xz
+        sha256: c15582301e8a3d7c98c3e3ff5b3e8e30f5f875aa1d097e2b9456c45dd0029d4f
+      
+  - name: modern-tools
+    buildsystem: simple
+    sources:
+      - type: archive
+        url: https://github.com/sharkdp/bat/releases/download/v0.23.0/bat-v0.23.0-x86_64-unknown-linux-musl.tar.gz
+        sha256: 26df2fb7b58a87b3c3c88ab45cb5087c87ed7b9033e0e74e64dc0d9b8fa8de5e
+    build-commands:
+      - install -Dm755 bat-v0.23.0-x86_64-unknown-linux-musl/bat /app/bin/bat

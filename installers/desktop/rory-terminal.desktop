@@ -1,0 +1,28 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Rory Terminal
+GenericName=Terminal Theme Manager
+Comment=Cyberpunk terminal customization with Matrix-style animations
+Icon=rory-terminal
+Exec=rory-terminal-launcher
+Terminal=false
+Categories=System;TerminalEmulator;Utility;
+Keywords=terminal;theme;cyberpunk;matrix;customization;
+StartupNotify=false
+Actions=Matrix;Settings;Themes;
+
+[Desktop Action Matrix]
+Name=Run Matrix Animation
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix
+
+[Desktop Action Settings]
+Name=Open Settings
+Icon=preferences-system
+Exec=rory-terminal-launcher --settings
+
+[Desktop Action Themes]
+Name=Select Theme
+Icon=preferences-desktop-theme
+Exec=rory-terminal-launcher --themes

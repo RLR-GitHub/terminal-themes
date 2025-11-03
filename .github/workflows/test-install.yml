@@ -1,0 +1,154 @@
+name: Test Installation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test-unix-installer:
+    name: Test Unix Installer
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        shell: [bash, zsh]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install shell if needed
+        if: matrix.shell == 'zsh' && matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y zsh
+        
+      - name: Test installer
+        shell: ${{ matrix.shell }} {0}
+        run: |
+          # Test non-interactive installation
+          export RORY_TERMINAL_AUTO_INSTALL=1
+          export RORY_TERMINAL_OPTION=1
+          ./installers/install.sh
+          
+      - name: Verify installation
+        shell: ${{ matrix.shell }} {0}
+        run: |
+          # Check if files are installed
+          if [[ -d "$HOME/.local/share/rory-terminal" ]]; then
+            echo "✓ Installation directory exists"
+          else
+            echo "✗ Installation directory not found"
+            exit 1
+          fi
+          
+          # Check theme manager
+          if $HOME/.local/share/rory-terminal/core/option1-starship/theme-manager.sh list; then
+            echo "✓ Theme manager works"
+          else
+            echo "✗ Theme manager failed"
+            exit 1
+          fi
+
+  test-windows-installer:
+    name: Test Windows Installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test PowerShell installer
+        shell: powershell
+        run: |
+          # Test non-interactive installation
+          $env:RORY_TERMINAL_AUTO_INSTALL = "1"
+          .\installers\install.ps1
+          
+      - name: Verify installation
+        shell: powershell
+        run: |
+          # Check if module is available
+          if (Get-Module -ListAvailable -Name RoryTerminal) {
+            Write-Host "✓ PowerShell module installed"
+          } else {
+            Write-Error "✗ PowerShell module not found"
+            exit 1
+          }
+          
+          # Import and test module
+          Import-Module RoryTerminal
+          if (Get-RoryTheme) {
+            Write-Host "✓ Module functions work"
+          } else {
+            Write-Error "✗ Module functions failed"
+            exit 1
+          }
+
+  test-docker:
+    name: Test in Docker
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: 
+          - ubuntu:22.04
+          - debian:11
+          - fedora:38
+          - archlinux:latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test in Docker container
+        run: |
+          docker run --rm -v $PWD:/workspace -w /workspace ${{ matrix.image }} bash -c "
+            # Install dependencies
+            if command -v apt-get >/dev/null; then
+              apt-get update && apt-get install -y curl git bash
+            elif command -v dnf >/dev/null; then
+              dnf install -y curl git bash
+            elif command -v pacman >/dev/null; then
+              pacman -Sy --noconfirm curl git bash
+            fi
+            
+            # Test installer
+            export RORY_TERMINAL_AUTO_INSTALL=1
+            export RORY_TERMINAL_OPTION=1
+            bash ./installers/install.sh
+            
+            # Verify
+            ~/.local/share/rory-terminal/core/option1-starship/theme-manager.sh list
+          "
+
+  test-package-installation:
+    name: Test Package Installation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build DEB package
+        run: |
+          cd installers/native/linux
+          ./build-deb.sh
+          
+      - name: Test DEB installation
+        run: |
+          # Find the built package
+          DEB_FILE=$(find dist/linux -name "*.deb" | head -1)
+          
+          # Install package
+          sudo dpkg -i "$DEB_FILE" || sudo apt-get install -f -y
+          
+          # Test installed commands
+          if command -v rory-terminal-launcher.sh; then
+            echo "✓ Command installed"
+          else
+            echo "✗ Command not found"
+            exit 1
+          fi
+          
+      - name: Test desktop integration
+        run: |
+          # Check desktop files
+          if [[ -f /usr/share/applications/rory-terminal.desktop ]]; then
+            echo "✓ Desktop file installed"
+          else
+            echo "✗ Desktop file not found"
+            exit 1
+          fi

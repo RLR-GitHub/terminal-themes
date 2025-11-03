@@ -1,0 +1,38 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Rory Matrix
+GenericName=Matrix Animation
+Comment=Matrix-style terminal animations with cyberpunk themes
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix
+Terminal=false
+Categories=System;Graphics;
+Keywords=matrix;animation;terminal;cyberpunk;screensaver;
+StartupNotify=false
+Actions=Halloween;Christmas;Easter;Hacker;Classic;
+
+[Desktop Action Halloween]
+Name=Halloween Theme
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix --theme halloween
+
+[Desktop Action Christmas]
+Name=Christmas Theme
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix --theme christmas
+
+[Desktop Action Easter]
+Name=Easter Theme
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix --theme easter
+
+[Desktop Action Hacker]
+Name=Hacker Theme
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix --theme hacker
+
+[Desktop Action Classic]
+Name=Classic Matrix Theme
+Icon=rory-terminal
+Exec=rory-terminal-launcher --matrix --theme matrix

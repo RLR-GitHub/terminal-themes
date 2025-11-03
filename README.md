@@ -1,15 +1,16 @@
-# 🌈 Rory's Terminal Theme Collection
+# 🌈 Rory Terminal - Universal Terminal Theming Platform
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-3.0-blue)
+![Version](https://img.shields.io/badge/version-3.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
+![PowerShell](https://img.shields.io/badge/PowerShell-5.1%2B-blue)
 ![Bash](https://img.shields.io/badge/bash-4.0%2B-orange)
-![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-lightgrey)
 
 **Transform your terminal into an immersive cyberpunk experience with Matrix-style animations**
 
-[View Demo](https://github.com/RLR-GitHub/terminal-themes) • [Report Bug](https://github.com/RLR-GitHub/terminal-themes/issues) • [Request Feature](https://github.com/RLR-GitHub/terminal-themes/issues)
+[View Demo](https://rlr-github.github.io/terminal-themes) • [Documentation](https://github.com/RLR-GitHub/terminal-themes/wiki) • [Report Bug](https://github.com/RLR-GitHub/terminal-themes/issues) • [Request Feature](https://github.com/RLR-GitHub/terminal-themes/issues)
 
 </div>
 
@@ -33,28 +34,195 @@ This repository contains **5 unique terminal themes** featuring Matrix-style dig
 
 - 🌧️ **Matrix Digital Rain** - Authentic falling character animations
 - 🎯 **Custom Alerts** - Theme-specific flashing alerts and messages
-- 🎨 **256-Color Support** - Rich terminal colors using ANSI escape codes
-- ⚡ **Lightweight** - Pure bash with no external dependencies
-- 🔧 **Customizable** - Easy to modify symbols, colors, and speeds
-- 🖥️ **Cross-Platform** - Works on Linux, macOS, and WSL
-- 🚀 **Startup Integration** - Auto-launch on terminal startup
-- 🎭 **Multiple Modes** - Brief intro mode (`--init`) or infinite mode
+- 🎨 **Universal Theming** - Works across Windows, macOS, and Linux
+- ⚡ **Smart Installation** - Detects your OS and shell automatically
+- 🔧 **Multiple Backends** - Starship integration or PTY color injection
+- 🖥️ **GUI & CLI** - Desktop app with theme selector + command-line tools
+- 📦 **Native Packages** - Available in all major package managers
+- 🚀 **Shell Integration** - Works with bash, zsh, fish, PowerShell, and CMD
+- 🎭 **Modern Tools** - Enhanced with eza, bat, delta, and more
+- 🔌 **Windows Terminal** - Automatic profile and color scheme setup
 
 ---
 
+## 📦 Deployment Pipelines
+
+### Complete Installation Matrix
+
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Package Manager</th>
+<th>GUI App</th>
+<th>Command Line</th>
+<th>Native Installer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td rowspan="6"><b>🐧 Linux</b></td>
+<td>APT/Debian</td>
+<td><code>sudo apt install rory-terminal</code></td>
+<td><code>curl -fsSL https://git.io/rory-terminal | bash</code></td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .deb</a></td>
+</tr>
+<tr>
+<td>YUM/RPM</td>
+<td><code>sudo dnf install rory-terminal</code></td>
+<td>Same as above</td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .rpm</a></td>
+</tr>
+<tr>
+<td>Snap</td>
+<td><code>sudo snap install rory-terminal</code></td>
+<td>Included in snap</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Flatpak</td>
+<td><code>flatpak install flathub com.rory.Terminal</code></td>
+<td>Included in flatpak</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>AppImage</td>
+<td>N/A</td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download AppImage</a></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>AUR (Arch)</td>
+<td><code>yay -S rory-terminal</code></td>
+<td>Same package</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td rowspan="3"><b>🍎 macOS</b></td>
+<td>Homebrew</td>
+<td><code>brew install --cask rory-terminal</code></td>
+<td><code>brew install rory-terminal</code></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>MacPorts</td>
+<td><code>sudo port install rory-terminal</code></td>
+<td>Same package</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Direct Download</td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .dmg</a></td>
+<td><code>curl -fsSL https://git.io/rory-terminal | bash</code></td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .pkg</a></td>
+</tr>
+<tr>
+<td rowspan="4"><b>🪟 Windows</b></td>
+<td>Winget</td>
+<td><code>winget install RoryTerminal</code></td>
+<td>Included</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Chocolatey</td>
+<td><code>choco install rory-terminal</code></td>
+<td>Included</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Scoop</td>
+<td><code>scoop install rory-terminal</code></td>
+<td>Included</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Direct Download</td>
+<td>N/A</td>
+<td><code>iwr -useb https://git.io/rory-terminal | iex</code></td>
+<td><a href="https://github.com/RLR-GitHub/terminal-themes/releases">Download .msi</a></td>
+</tr>
+</tbody>
+</table>
+
+### 🚀 Quick Install Commands by OS
+
+<details>
+<summary><b>🐧 Ubuntu/Debian</b></summary>
+
+```bash
+# Option 1: PPA (recommended)
+sudo add-apt-repository ppa:rlr-github/terminal-themes
+sudo apt update
+sudo apt install rory-terminal
+
+# Option 2: Download .deb
+wget https://github.com/RLR-GitHub/terminal-themes/releases/download/v3.0.0/rory-terminal_3.0.0_amd64.deb
+sudo dpkg -i rory-terminal_3.0.0_amd64.deb
+
+# Option 3: Snap
+sudo snap install rory-terminal
+
+# Option 4: Script install
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+```
+</details>
+
+<details>
+<summary><b>🍎 macOS</b></summary>
+
+```bash
+# Option 1: Homebrew Cask (GUI app)
+brew install --cask rory-terminal
+
+# Option 2: Homebrew Formula (CLI only)
+brew install rory-terminal
+
+# Option 3: Download DMG
+# Visit: https://github.com/RLR-GitHub/terminal-themes/releases
+
+# Option 4: Script install
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+```
+</details>
+
+<details>
+<summary><b>🪟 Windows</b></summary>
+
+```powershell
+# Option 1: Winget (Windows 11/10)
+winget install RoryTerminal
+
+# Option 2: Chocolatey
+choco install rory-terminal
+
+# Option 3: PowerShell script
+iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
+
+# Option 4: Download MSI
+# Visit: https://github.com/RLR-GitHub/terminal-themes/releases
+```
+</details>
+
+### 📱 Desktop Integration
+
+All installation methods provide:
+- **Desktop shortcuts** - Launch from your applications menu
+- **Terminal commands** - Run `rory-terminal` from anywhere
+- **Shell integration** - Automatic theme loading
+- **GUI theme selector** - Visual theme management
+
 ## 📋 Requirements
 
-- **Bash 4.0+** (check with `bash --version`)
-- **Terminal** with 256-color support (most modern terminals)
-- **UTF-8** character encoding (for emoji and katakana support)
+### Minimum Requirements
+- **Windows:** Windows 10+ with PowerShell 5.1+
+- **macOS:** macOS 10.14+ with bash 4.0+
+- **Linux:** Any modern distribution with bash 4.0+
 
-### Recommended Terminals
-- ✅ iTerm2 (macOS)
-- ✅ GNOME Terminal (Linux)
-- ✅ Terminator (Linux)
-- ✅ Windows Terminal (Windows)
-- ✅ Alacritty (All platforms)
-- ✅ kitty (All platforms)
+### Recommended Setup
+- **Windows Terminal** (Windows) or **iTerm2** (macOS) or **GNOME Terminal** (Linux)
+- **Starship prompt** (auto-installed)
+- **256-color support** and **UTF-8 encoding**
+- **Nerd Font** (recommended: FiraCode Nerd Font)
 
 ---
 
@@ -62,41 +230,21 @@ This repository contains **5 unique terminal themes** featuring Matrix-style dig
 
 ### One-Line Install
 
+**Unix/Linux/macOS:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
-### Manual Installation
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/RLR-GitHub/terminal-themes.git
-cd terminal-themes
+**Windows PowerShell:**
+```powershell
+iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
 ```
 
-2. **Choose your theme and copy the script**
-```bash
-# Example: Halloween theme
-cp themes/matrix-halloween.sh ~/matrix.sh
-chmod +x ~/matrix.sh
-```
+### GUI Application
 
-3. **Add to your shell configuration**
-
-For **bash** users, add to `~/.bashrc`:
-```bash
-echo '~/matrix.sh --init' >> ~/.bashrc
-```
-
-For **zsh** users, add to `~/.zshrc`:
-```bash
-echo '~/matrix.sh --init' >> ~/.zshrc
-```
-
-4. **Reload your shell**
-```bash
-source ~/.bashrc  # or source ~/.zshrc
-```
+- **Windows:** Download from [Microsoft Store](#) or use the MSI installer
+- **macOS:** Download from [Mac App Store](#) or use `brew install --cask rory-terminal`
+- **Linux:** Install via your package manager or download the AppImage
 
 ---
 
@@ -304,25 +452,16 @@ Change the `RANDOM %` values to adjust alert probability:
 
 ---
 
-## 🌐 Interactive HTML Demo
+## 🌐 Interactive Online Demo
 
-This repository includes an interactive HTML preview page that showcases all themes with live animations:
+Try it live in your browser: [https://rlr-github.github.io/terminal-themes](https://rlr-github.github.io/terminal-themes)
 
-```bash
-# Open the demo in your browser
-open demo/rory-terminal-themes.html
-
-# Or start a local server
-cd demo
-python3 -m http.server 8000
-# Visit http://localhost:8000/rory-terminal-themes.html
-```
-
-The demo page features:
+The demo features:
 - ✨ Live Matrix rain animations for each theme
-- 📋 One-click copy buttons for all bash scripts
+- 📋 Platform-specific installation commands
 - 🎨 Responsive design with theme-specific styling
 - 🎭 Random alert flashing effects
+- 🖥️ OS detection for tailored instructions
 
 ---
 
@@ -498,15 +637,18 @@ SOFTWARE.
 - [x] 5 initial themes (Halloween, Christmas, Easter, Hacker, Matrix)
 - [x] Interactive HTML demo page
 - [x] Comprehensive documentation
-- [ ] Automated install script
-- [ ] Package manager support (Homebrew, apt)
+- [x] Automated install script (bash & PowerShell)
+- [x] Package manager support (Homebrew, apt, Chocolatey, etc.)
+- [x] Windows native support (PowerShell)
+- [x] Cross-platform GUI application
+- [x] Desktop integration (all platforms)
+- [x] Shell completion support
+- [x] Starship prompt integration
+- [x] PTY wrapper for advanced theming
 - [ ] More holiday themes
-- [ ] Color scheme customization wizard
-- [ ] Terminal recording/GIF generation
-- [ ] Windows native support (PowerShell)
-- [ ] Configuration file support (~/.matrixrc)
-- [ ] Plugin system for custom themes
-- [ ] Performance optimizations for large terminals
+- [ ] Cloud sync for settings
+- [ ] Theme marketplace
+- [ ] AI-powered theme generation
 
 ---
 

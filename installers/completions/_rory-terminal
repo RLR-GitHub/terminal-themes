@@ -1,0 +1,98 @@
+#compdef rory-terminal rory-theme rory-matrix
+# Zsh completion for rory-terminal
+
+_rory_themes() {
+    local themes
+    themes=(
+        'halloween:Spooky orange matrix rain'
+        'christmas:Festive red and green'
+        'easter:Pastel rainbow colors'
+        'hacker:Bright green cyberpunk'
+        'matrix:Classic Matrix movie green'
+    )
+    _describe -t themes 'theme' themes
+}
+
+_rory_terminal() {
+    local -a commands
+    commands=(
+        'install:Install Rory Terminal integration'
+        'theme:Manage terminal themes'
+        'matrix:Run Matrix animation'
+        'gui:Open GUI theme selector'
+        'help:Show help information'
+        'version:Show version information'
+    )
+    
+    _arguments \
+        '1: :->command' \
+        '*:: :->args'
+    
+    case $state in
+        command)
+            _describe -t commands 'rory-terminal command' commands
+            ;;
+        args)
+            case $words[1] in
+                theme)
+                    local -a theme_commands
+                    theme_commands=(
+                        'set:Set active theme'
+                        'list:List available themes'
+                        'current:Show current theme'
+                    )
+                    _arguments '1: :->theme_command' '*:: :->theme_args'
+                    
+                    case $state in
+                        theme_command)
+                            _describe -t theme_commands 'theme command' theme_commands
+                            ;;
+                        theme_args)
+                            if [[ $words[2] == "set" ]]; then
+                                _rory_themes
+                            fi
+                            ;;
+                    esac
+                    ;;
+                matrix)
+                    _rory_themes
+                    ;;
+            esac
+            ;;
+    esac
+}
+
+_rory_theme() {
+    local -a commands
+    commands=(
+        'set:Set active theme'
+        'list:List available themes'
+        'current:Show current theme'
+        'enable-starship:Enable Starship integration'
+        'disable-starship:Disable Starship integration'
+    )
+    
+    _arguments \
+        '1: :->command' \
+        '*:: :->args'
+    
+    case $state in
+        command)
+            _describe -t commands 'rory-theme command' commands
+            ;;
+        args)
+            if [[ $words[1] == "set" ]]; then
+                _rory_themes
+            fi
+            ;;
+    esac
+}
+
+_rory_matrix() {
+    _rory_themes
+}
+
+# Register completions
+compdef _rory_terminal rory-terminal
+compdef _rory_theme rory-theme
+compdef _rory_matrix rory-matrix
