@@ -116,7 +116,7 @@ jobs:
           VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/macos
           chmod +x build-app-bundle.sh
-          ./build-app-bundle.sh
+          ./build-app-bundle.sh "$VERSION"
 
       - name: Sign packages (if certificate available)
         if: ${{ env.MACOS_CERTIFICATE }}
