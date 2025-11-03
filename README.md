@@ -30,16 +30,16 @@
    #  #  #     #  ######   #     #  #####
 
 
-  #     #    #    ######  ######   #  #    #
-  ##   ##   # #      #    #     #  #  #  #
-  # # # #  #   #     #    #     #  #   ##
-  #  #  # #     #   #    ######   #   ##
-  #     # #######   #    #   #    #   ##
-  #     # #     #   #    #    #   #  # #
-  #     # #     #   #    #     #  # #   #
+  #     #    #     #   ######   #   #      
+  ##   ##   ##    ##       #    #   #      
+  # # # #  #  #  #  #       #    #   #      
+  #  #  # #  # #  #  #      #    #    #     
+  #     # #   #   #  #       #    #     #     
+  #     # #     #  #  #       #    #     #     
+  #     # #     #   ######   #    #     #     
 ```
 
-*Welcome to the Matrix. Your terminal will never be the same.*
+*Welcome to the Maze. Your terminal will never be the same.*
 
 </div>
 
@@ -47,13 +47,13 @@
 
 ## 📸 Terminal Preview
 
-When you run any Rory Terminal theme, you'll see the ASCII banner followed by the Matrix rain animation:
+When you run any Rory Terminal theme, you'll see the ASCII MAZE banner followed by the Matrix rain animation:
 
 <div align="center">
 <img src="https://user-images.githubusercontent.com/placeholder/terminal-demo.gif" alt="Rory Terminal in action" width="600">
 </div>
 
-> **Note:** The banner colors adapt to your selected theme. The image above shows the Hacker theme with bright green colors.
+> **Note:** The MAZE banner colors adapt to your selected theme (Halloween orange, Christmas red/green, Easter pastels, Hacker bright green, Matrix dark green).
 
 ---
 
