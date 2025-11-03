@@ -284,41 +284,42 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 
 ## 📖 Detailed Installation
 
-### Step 1: Download Theme Script
+> **For comprehensive deployment instructions, troubleshooting, and platform-specific guides, see the [📚 Deployment Guide](docs/DEPLOYMENT.md)**
 
-Choose your favorite theme and save it as `~/matrix.sh`:
+### Manual Installation
 
-```bash
-# Halloween Theme
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-halloween.sh
+For manual installation or customization, see the [📚 Deployment Guide](docs/DEPLOYMENT.md).
 
-# Christmas Theme
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-christmas.sh
-
-# Easter Theme
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-easter.sh
-
-# Hacker Theme
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-hacker.sh
-
-# Matrix Theme
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-classic.sh
-```
-
-### Step 2: Make Executable
+Quick manual install:
 
 ```bash
-chmod +x ~/matrix.sh
+# 1. Run the installer (recommended)
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+
+# 2. Or download a specific theme manually
+THEME="hacker"  # Choose: halloween, christmas, easter, hacker, matrix
+curl -o ~/.local/bin/matrix https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-${THEME}.sh
+chmod +x ~/.local/bin/matrix
+
+# 3. Add to PATH (if needed)
+export PATH="$HOME/.local/bin:$PATH"
+
+# 4. Run the animation
+matrix          # Full animation
+matrix --init   # 5-second intro
 ```
 
-### Step 3: Configure Bash/Zsh
+### Shell Configuration (Optional)
 
-Add the following to your `~/.bashrc` or `~/.zshrc`:
+Add cyberpunk enhancements to your `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 # ================================
 # Rory's Cyberpunk Terminal Setup
 # ================================
+
+# Ensure ~/.local/bin is in PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 # Set terminal title
 function set-title() {
@@ -329,7 +330,7 @@ function set-title() {
 function sys-status() {
     echo -e "\e[1;32m╓───[ SYSTEM STATUS ]──────────────\e[0m"
     echo -e "\e[1;32m╟─\e[0m \e[1;33mUser:\e[0m $(whoami)@$(hostname)"
-    echo -e "\e[1;32m╟─\e[0m \e[1;33mUptime:\e[0m $(uptime -p)"
+    echo -e "\e[1;32m╟─\e[0m \e[1;33mUptime:\e[0m $(uptime -p 2>/dev/null || uptime)"
     echo -e "\e[1;32m╟─\e[0m \e[1;33mDisk:\e[0m $(df -h / | awk 'NR==2{print $5}')"
     echo -e "\e[1;32m╙──────────────────────────────────\e[0m"
 }
@@ -341,19 +342,12 @@ alias ll='ls -la --color=auto'
 alias gitc='git commit -m'
 alias hack='echo "Initiating hack sequence..." && sleep 1 && echo "Access granted."'
 alias scan='echo "Scanning network..." && ping -c 3 8.8.8.8'
-alias matrix='~/matrix.sh'
 
-# Custom cyberpunk prompt
-PS1='\[\e[0;32m\]┌──(\[\e[1;31m\]\u@\h\[\e[0;32m\])─[\[\e[0m\]\w\[\e[0;32m\]]\n└──\$ \[\e[0m\]'
+# Custom cyberpunk prompt (optional - installer may set this)
+# PS1='\[\e[0;32m\]┌──(\[\e[1;31m\]\u@\h\[\e[0;32m\])─[\[\e[0m\]\w\[\e[0;32m\]]\n└──\$ \[\e[0m\]'
 
 # Launch Matrix animation on startup (5-second intro)
-~/matrix.sh --init
-```
-
-### Step 4: Reload Shell
-
-```bash
-source ~/.bashrc  # or source ~/.zshrc
+command -v matrix >/dev/null 2>&1 && matrix --init
 ```
 
 ---

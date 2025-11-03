@@ -153,11 +153,42 @@ check_requirements() {
     print_info "Package Manager: $pkg_manager"
     print_info "Shell: $shell_type"
     
+    # Check for bash (required for matrix scripts)
+    if ! command -v bash &> /dev/null; then
+        print_warning "Bash not found. Installing bash..."
+        case "$pkg_manager" in
+            apt)
+                sudo apt-get update && sudo apt-get install -y bash
+                ;;
+            dnf|yum)
+                sudo $pkg_manager install -y bash
+                ;;
+            pacman)
+                sudo pacman -S --noconfirm bash
+                ;;
+            zypper)
+                sudo zypper install -y bash
+                ;;
+            brew)
+                brew install bash
+                ;;
+            *)
+                print_error "Please install bash manually before continuing"
+                exit 1
+                ;;
+        esac
+    fi
+    
     # Check bash version if using bash
-    if [[ "$shell_type" == "bash" ]]; then
-        local bash_version="${BASH_VERSION%%[.]*}"
+    if [[ "$shell_type" == "bash" ]] || command -v bash &> /dev/null; then
+        local bash_version
+        if [[ -n "$BASH_VERSION" ]]; then
+            bash_version="${BASH_VERSION%%[.]*}"
+        else
+            bash_version=$(bash -c 'echo ${BASH_VERSION%%[.]*}')
+        fi
         if [[ "$bash_version" -lt 4 ]]; then
-            print_warning "Bash 4.0+ recommended. Current: $BASH_VERSION"
+            print_warning "Bash 4.0+ recommended. Current: ${BASH_VERSION:-$(bash --version | head -1)}"
         else
             print_success "Bash version OK"
         fi
@@ -370,15 +401,44 @@ install_matrix_only() {
     
     local shell_type=$(detect_shell)
     local script_name="matrix-${THEME}.sh"
+    local install_path="${HOME}/.local/bin/matrix"
     
     # Download bash script
     if command -v curl &> /dev/null; then
-        curl -fsSL "${REPO_URL}/themes/bash/${script_name}" -o "${HOME}/.local/bin/matrix"
+        curl -fsSL "${REPO_URL}/themes/bash/${script_name}" -o "${install_path}"
     else
-        wget -q "${REPO_URL}/themes/bash/${script_name}" -O "${HOME}/.local/bin/matrix"
+        wget -q "${REPO_URL}/themes/bash/${script_name}" -O "${install_path}"
     fi
     
-    chmod +x "${HOME}/.local/bin/matrix"
+    # Make executable
+    chmod +x "${install_path}"
+    
+    # Verify shebang for Ubuntu/Debian compatibility
+    if [[ -f "${install_path}" ]]; then
+        # Check if bash exists
+        if ! command -v bash &> /dev/null; then
+            print_error "Bash not found! Installing bash..."
+            install_dependency bash
+        fi
+        
+        # Install the universal wrapper for better compatibility
+        if command -v curl &> /dev/null; then
+            curl -fsSL "${REPO_URL}/installers/matrix-wrapper.sh" -o "${install_path}.wrapper"
+        else
+            wget -q "${REPO_URL}/installers/matrix-wrapper.sh" -O "${install_path}.wrapper"
+        fi
+        chmod +x "${install_path}.wrapper"
+        
+        # Create the main matrix command that uses the wrapper
+        mv "${install_path}" "${install_path}.real"
+        mv "${install_path}.wrapper" "${install_path}"
+        
+        # Create symlink for backward compatibility
+        if [[ ! -e "${HOME}/matrix.sh" ]]; then
+            ln -sf "${install_path}" "${HOME}/matrix.sh"
+            print_info "Created symlink: ~/matrix.sh -> ${install_path}"
+        fi
+    fi
     
     print_success "Matrix animation installed"
 }
