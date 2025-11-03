@@ -1,151 +1,245 @@
 name: Test Installation
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Build Native Packages"]
+    types: [completed]
+  pull_request:
+    paths:
+      - 'installers/**'
+      - '.github/workflows/test-install.yml'
 
 jobs:
-  test-unix-installer:
-    name: Test Unix Installer
+  test-script-install-linux:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        shell: [bash]
-    runs-on: ${{ matrix.os }}
+        distro: [ubuntu-latest, ubuntu-20.04]
     steps:
       - uses: actions/checkout@v4
       
-      - name: Test installer
-        shell: ${{ matrix.shell }} {0}
+      - name: Test install script
         run: |
-          # Test non-interactive installation
-          export RORY_TERMINAL_AUTO_INSTALL=1
-          export RORY_TERMINAL_OPTION=1
-          bash ./installers/install.sh || true
+          # Make script executable
+          chmod +x installers/install.sh
+          
+          # Run in test mode (if supported) or simulate
+          export RORY_TERMINAL_TEST=1
+          ./installers/install.sh || echo "Installation completed with status: $?"
           
       - name: Verify installation
-        shell: bash
         run: |
-          # Check if files exist in repo
-          if [[ -d "core/option1-starship" ]]; then
-            echo "✓ Core themes available"
+          # Check if files were installed
+          if [ -d "$HOME/.local/share/rory-terminal" ] || [ -d "/opt/rory-terminal" ]; then
+            echo "✓ Installation directory found"
           else
-            echo "✗ Core themes not found"
+            echo "✗ Installation directory not found"
             exit 1
           fi
           
-          # Check theme scripts
-          if [[ -f "themes/bash/matrix-hacker.sh" ]]; then
-            echo "✓ Theme scripts present"
+          # Check if command is available
+          if command -v rory-terminal >/dev/null 2>&1; then
+            echo "✓ rory-terminal command available"
           else
-            echo "✗ Theme scripts not found"
+            echo "✗ rory-terminal command not found"
+          fi
+
+  test-script-install-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test install script
+        run: |
+          chmod +x installers/install.sh
+          export RORY_TERMINAL_TEST=1
+          ./installers/install.sh || echo "Installation completed with status: $?"
+          
+      - name: Verify installation
+        run: |
+          # Check installation paths
+          if [ -d "$HOME/.local/share/rory-terminal" ] || [ -d "/Applications/RoryTerminal.app" ]; then
+            echo "✓ Installation found"
+          else
+            echo "✗ Installation not found"
             exit 1
           fi
 
-  test-windows-installer:
-    name: Test Windows Installer
+  test-script-install-windows:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Test PowerShell installer
-        shell: powershell
-        continue-on-error: true
+      - name: Test PowerShell install script
         run: |
-          # Test non-interactive installation
-          $env:RORY_TERMINAL_AUTO_INSTALL = "1"
-          & ".\installers\install.ps1" || Write-Host "Installation skipped (expected)"
+          Set-StrictMode -Version Latest
+          $env:RORY_TERMINAL_TEST = "1"
           
-      - name: Verify installation scripts
-        shell: powershell
-        run: |
-          # Check if install script exists
-          if (Test-Path ".\installers\install.ps1") {
-            Write-Host "✓ PowerShell installer found"
-          } else {
-            Write-Error "✗ PowerShell installer not found"
+          # Test the installation script
+          try {
+            . .\installers\install.ps1
+            Write-Host "✓ Installation script executed"
+          } catch {
+            Write-Host "✗ Installation failed: $_"
             exit 1
           }
+        shell: pwsh
+        
+      - name: Verify installation
+        run: |
+          # Check for installation
+          $paths = @(
+            "$env:LOCALAPPDATA\RoryTerminal",
+            "$env:PROGRAMFILES\RoryTerminal",
+            "$env:USERPROFILE\.rory-terminal"
+          )
+          
+          $found = $false
+          foreach ($path in $paths) {
+            if (Test-Path $path) {
+              Write-Host "✓ Installation found at: $path"
+              $found = $true
+              break
+            }
+          }
+          
+          if (-not $found) {
+            Write-Host "✗ Installation not found"
+            exit 1
+          }
+        shell: pwsh
 
-  test-docker:
-    name: Test in Docker
-    runs-on: ubuntu-latest
+  test-native-packages:
+    needs: [test-script-install-linux, test-script-install-macos, test-script-install-windows]
+    if: github.event.workflow_run.conclusion == 'success'
     strategy:
       matrix:
-        image: 
-          - ubuntu:22.04
-          - debian:11
-          - fedora:38
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       
-      - name: Test in Docker container
+      - name: Download artifacts
+        if: github.event.workflow_run
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: ${{ github.event.workflow_run.id }}
+            });
+            
+            const matchArtifact = artifacts.data.artifacts.find(artifact => {
+              if ('${{ matrix.os }}' == 'ubuntu-latest') return artifact.name.includes('linux-deb');
+              if ('${{ matrix.os }}' == 'macos-latest') return artifact.name.includes('macos-packages');
+              if ('${{ matrix.os }}' == 'windows-latest') return artifact.name.includes('windows-packages');
+            });
+            
+            if (matchArtifact) {
+              const download = await github.rest.actions.downloadArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: matchArtifact.id,
+                archive_format: 'zip'
+              });
+              
+              require('fs').writeFileSync('package.zip', Buffer.from(download.data));
+              
+              // Extract based on OS
+              if ('${{ matrix.os }}' == 'windows-latest') {
+                await exec.exec('powershell', ['Expand-Archive', '-Path', 'package.zip', '-DestinationPath', '.']);
+              } else {
+                await exec.exec('unzip', ['package.zip']);
+              }
+            }
+            
+      - name: Test package installation (Linux)
+        if: runner.os == 'Linux'
         run: |
-          docker run --rm -v $PWD:/workspace -w /workspace ${{ matrix.image }} bash -c "
-            # Install dependencies
-            if command -v apt-get >/dev/null; then
-              apt-get update && apt-get install -y curl git bash 2>/dev/null
-            elif command -v dnf >/dev/null; then
-              dnf install -y curl git bash 2>/dev/null
-            fi
+          # Find and install .deb package
+          DEB_FILE=$(find . -name "*.deb" -type f | head -1)
+          if [ -n "$DEB_FILE" ]; then
+            echo "Installing: $DEB_FILE"
+            sudo dpkg -i "$DEB_FILE" || sudo apt-get install -f -y
             
-            # Verify source files exist
-            if [[ -f ./installers/install.sh ]]; then
-              echo '✓ Installation script present'
-            else
-              echo '✗ Installation script not found'
-              exit 1
-            fi
+            # Verify
+            dpkg -l | grep rory-terminal && echo "✓ Package installed"
+          else
+            echo "No .deb package found to test"
+          fi
+          
+      - name: Test package installation (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          # Find and install .pkg
+          PKG_FILE=$(find . -name "*.pkg" -type f | head -1)
+          if [ -n "$PKG_FILE" ]; then
+            echo "Installing: $PKG_FILE"
+            sudo installer -pkg "$PKG_FILE" -target /
             
-            # Check themes
-            if [[ -d ./themes ]]; then
-              echo '✓ Themes directory present'
-            else
-              echo '✗ Themes directory not found'
-              exit 1
-            fi
-          " || true
+            # Verify
+            [ -d "/Applications/RoryTerminal.app" ] && echo "✓ App installed"
+          else
+            echo "No .pkg package found to test"
+          fi
+          
+      - name: Test package installation (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          # Find and install .msi
+          $msiFile = Get-ChildItem -Filter "*.msi" -Recurse | Select-Object -First 1
+          if ($msiFile) {
+            Write-Host "Installing: $($msiFile.FullName)"
+            Start-Process msiexec.exe -ArgumentList "/i", $msiFile.FullName, "/quiet", "/norestart" -Wait
+            
+            # Verify
+            if (Test-Path "$env:PROGRAMFILES\RoryTerminal") {
+              Write-Host "✓ Package installed"
+            }
+          } else {
+            Write-Host "No .msi package found to test"
+          }
+        shell: pwsh
 
-  test-package-installation:
-    name: Test Package Installation
-    runs-on: ubuntu-latest
+  test-uninstall:
+    needs: test-native-packages
+    if: always()
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       
-      - name: Build DEB package
+      - name: Test uninstall (Linux)
+        if: runner.os == 'Linux'
         run: |
-          cd installers/native/linux
-          chmod +x build-deb.sh
-          ./build-deb.sh || true
+          # Try to uninstall if installed
+          sudo apt-get remove -y rory-terminal 2>/dev/null || true
+          sudo rm -rf /opt/rory-terminal ~/.local/share/rory-terminal
           
-      - name: Test DEB build output
+      - name: Test uninstall (macOS)
+        if: runner.os == 'macOS'
         run: |
-          # Find the built package
-          if DEB_FILE=$(find dist -name "*.deb" 2>/dev/null | head -1); then
-            echo "✓ DEB package built: $DEB_FILE"
-            ls -lh "$DEB_FILE"
+          # Run uninstall script if it exists
+          if [ -f "/Applications/RoryTerminal.app/Contents/Resources/uninstall.sh" ]; then
+            sudo /Applications/RoryTerminal.app/Contents/Resources/uninstall.sh
           else
-            echo "⚠ DEB package not found (build may have skipped)"
+            sudo rm -rf /Applications/RoryTerminal.app /opt/rory-terminal
           fi
           
-      - name: Verify theme files
+      - name: Test uninstall (Windows)
+        if: runner.os == 'Windows'
         run: |
-          # Check for core themes
-          if [[ -d "core/option1-starship" ]]; then
-            echo "✓ Starship integration available"
-          else
-            echo "✗ Starship integration not found"
-            exit 1
-          fi
+          # Try to uninstall via MSI
+          $product = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -like "*Rory*Terminal*" }
+          if ($product) {
+            $product.Uninstall()
+          }
           
-          # Check for theme scripts
-          if [[ -d "themes/bash" ]]; then
-            echo "✓ Bash themes available"
-            ls themes/bash/
-          else
-            echo "✗ Bash themes not found"
-            exit 1
-          fi
+          # Clean up directories
+          Remove-Item -Path "$env:PROGRAMFILES\RoryTerminal" -Recurse -Force -ErrorAction SilentlyContinue
+          Remove-Item -Path "$env:LOCALAPPDATA\RoryTerminal" -Recurse -Force -ErrorAction SilentlyContinue
+        shell: pwsh

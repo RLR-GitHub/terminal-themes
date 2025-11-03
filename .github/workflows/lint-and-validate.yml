@@ -2,140 +2,164 @@ name: Lint and Validate
 
 on:
   push:
-    branches: [main]
+    branches: [ main, develop ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
-  lint-shell:
-    name: Lint Shell Scripts
+  shellcheck:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       
-      - name: Install ShellCheck
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y shellcheck
-          
       - name: Run ShellCheck
         run: |
-          find . -name "*.sh" -type f -print0 | xargs -0 shellcheck || true
+          # Install shellcheck
+          sudo apt-get update && sudo apt-get install -y shellcheck
           
-      - name: Check shell script formatting
-        run: |
-          # Check for common issues
-          echo "Checking for trailing whitespace..."
-          ! grep -r '[[:space:]]$' --include="*.sh" . || echo "Found trailing whitespace"
-          
-          echo "Checking for tabs vs spaces..."
-          # This is informational only
-          find . -name "*.sh" -exec grep -l $'\t' {} \; | head -10 || true
+          # Find and check all shell scripts
+          find . -type f \( -name "*.sh" -o -name "*.bash" \) -print0 | while IFS= read -r -d '' file; do
+            echo "Checking: $file"
+            shellcheck "$file" || echo "Issues found in $file (non-blocking)"
+          done
 
-  lint-powershell:
-    name: Lint PowerShell Scripts
+  powershell-analyzer:
     runs-on: windows-latest
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       
       - name: Install PSScriptAnalyzer
-        shell: powershell
         run: |
-          Install-Module -Name PSScriptAnalyzer -Force -SkipPublisherCheck
-          
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+        shell: pwsh
+        
       - name: Run PSScriptAnalyzer
-        shell: powershell
         run: |
-          $results = Invoke-ScriptAnalyzer -Path . -Recurse -ReportSummary
-          $results | Format-Table -AutoSize
-          
-          if ($results.Count -gt 0) {
-            Write-Warning "Found $($results.Count) issues"
+          $scripts = Get-ChildItem -Path . -Include *.ps1,*.psm1,*.psd1 -Recurse
+          foreach ($script in $scripts) {
+            Write-Host "Analyzing: $($script.FullName)"
+            Invoke-ScriptAnalyzer -Path $script.FullName -ReportSummary || Write-Host "Issues found in $($script.Name) (non-blocking)"
           }
+        shell: pwsh
 
-  validate-json:
-    name: Validate JSON Files
+  validate-configs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       
-      - name: Validate JSON syntax
+      - name: Validate JSON files
         run: |
-          find . -name "*.json" -type f -exec python3 -m json.tool {} > /dev/null \; \
-            -print -exec echo "✓ Valid JSON" \; || exit 1
-
-  validate-yaml:
-    name: Validate YAML Files
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install yamllint
-        run: |
-          pip install yamllint
+          # Find all JSON files and validate
+          find . -name "*.json" -type f -print0 | while IFS= read -r -d '' file; do
+            echo "Validating JSON: $file"
+            python -m json.tool "$file" > /dev/null || exit 1
+          done
           
       - name: Validate YAML files
         run: |
-          yamllint . || true
-
-  validate-toml:
-    name: Validate TOML Files
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Install toml-cli
-        run: |
-          pip install toml-cli
+          # Install yamllint
+          pip install yamllint
+          
+          # Find and validate YAML files
+          find . \( -name "*.yml" -o -name "*.yaml" \) -type f -print0 | while IFS= read -r -d '' file; do
+            echo "Validating YAML: $file"
+            yamllint -d relaxed "$file" || exit 1
+          done
           
       - name: Validate TOML files
         run: |
-          find . -name "*.toml" -type f -exec toml validate {} \; || true
-
-  check-licenses:
-    name: Check Licenses
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Check for license headers
-        continue-on-error: true
-        run: |
-          echo "Checking for license headers in source files..."
-          # This is a simple check - enhance as needed
-          files_without_license=0
-          for file in $(find . -name "*.sh" -o -name "*.ps1" -o -name "*.py"); do
-            if ! head -20 "$file" | grep -qi "license\|copyright"; then
-              echo "Warning: $file may be missing license header"
-              ((files_without_license++))
-            fi
+          # Install toml-cli
+          pip install toml-cli
+          
+          # Find and validate TOML files
+          find . -name "*.toml" -type f -print0 | while IFS= read -r -d '' file; do
+            echo "Validating TOML: $file"
+            toml validate "$file" || exit 1
           done
-          echo "Files potentially missing license: $files_without_license"
-          exit 0
 
   security-scan:
-    name: Security Scan
     runs-on: ubuntu-latest
     continue-on-error: true
-    permissions:
-      contents: read
-      security-events: write
     steps:
       - uses: actions/checkout@v4
       
       - name: Run Trivy security scan
         uses: aquasecurity/trivy-action@master
-        continue-on-error: true
         with:
           scan-type: 'fs'
           scan-ref: '.'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
           
-      - name: Upload Trivy results
-        uses: github/codeql-action/upload-sarif@v2
-        if: always()
-        continue-on-error: true
+  license-check:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check LICENSE file exists
+        run: |
+          if [ ! -f "LICENSE" ]; then
+            echo "ERROR: LICENSE file not found"
+            exit 1
+          fi
+          echo "✓ LICENSE file exists"
+          
+      - name: Validate license headers
+        run: |
+          # Check for license headers in source files (optional)
+          echo "Checking for license headers (informational only)..."
+          find . \( -name "*.sh" -o -name "*.ps1" -o -name "*.py" \) -type f | head -20 | while read -r file; do
+            if head -n 5 "$file" | grep -q -i "copyright\|license"; then
+              echo "✓ $file has license header"
+            else
+              echo "ℹ $file might be missing license header"
+            fi
+          done
+
+  markdown-lint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Lint Markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v14
         with:
-          sarif_file: 'trivy-results.sarif'
+          globs: |
+            **/*.md
+            !node_modules/**
+            !vendor/**
+        continue-on-error: true
+
+  validate-desktop-files:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install desktop-file-utils
+        run: sudo apt-get update && sudo apt-get install -y desktop-file-utils
+        
+      - name: Validate desktop entries
+        run: |
+          find . -name "*.desktop" -type f -print0 | while IFS= read -r -d '' file; do
+            echo "Validating: $file"
+            desktop-file-validate "$file" || exit 1
+          done
+
+  check-file-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check executable permissions
+        run: |
+          # Scripts that should be executable
+          find . -name "*.sh" -type f | while read -r file; do
+            if [ ! -x "$file" ]; then
+              echo "WARNING: $file is not executable"
+            fi
+          done

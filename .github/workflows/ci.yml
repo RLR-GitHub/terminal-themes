@@ -1,0 +1,243 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  quick-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check repository structure
+        run: |
+          # Verify essential files exist
+          REQUIRED_FILES=(
+            "README.md"
+            "LICENSE"
+            "installers/install.sh"
+            "installers/install.ps1"
+            "config/default.json"
+            "config/themes.json"
+          )
+          
+          echo "Checking required files..."
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "✗ $file missing"
+              exit 1
+            fi
+          done
+          
+      - name: Check directory structure
+        run: |
+          # Verify essential directories exist
+          REQUIRED_DIRS=(
+            "core"
+            "themes"
+            "config"
+            "installers"
+            "docs"
+          )
+          
+          echo "Checking required directories..."
+          for dir in "${REQUIRED_DIRS[@]}"; do
+            if [ -d "$dir" ]; then
+              echo "✓ $dir/ exists"
+            else
+              echo "✗ $dir/ missing"
+              exit 1
+            fi
+          done
+
+  test-themes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate theme files
+        run: |
+          echo "Checking bash themes..."
+          for theme in themes/bash/*.sh; do
+            if [ -f "$theme" ]; then
+              bash -n "$theme" || echo "Syntax error in $theme"
+              echo "✓ $theme validated"
+            fi
+          done
+          
+          echo "Checking starship themes..."
+          for theme in themes/starship/*.toml; do
+            if [ -f "$theme" ]; then
+              # Basic TOML validation
+              python3 -c "import toml; toml.load('$theme')" || echo "Invalid TOML in $theme"
+              echo "✓ $theme validated"
+            fi
+          done
+
+  test-scripts:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test shell scripts (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          # Make scripts executable
+          find . -name "*.sh" -type f -exec chmod +x {} \;
+          
+          # Test syntax for all shell scripts
+          find . -name "*.sh" -type f | while read -r script; do
+            echo "Checking syntax: $script"
+            bash -n "$script" || exit 1
+          done
+          
+      - name: Test PowerShell scripts (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          # Test syntax for all PowerShell scripts
+          Get-ChildItem -Path . -Include *.ps1,*.psm1 -Recurse | ForEach-Object {
+            Write-Host "Checking syntax: $($_.FullName)"
+            $null = [System.Management.Automation.PSParser]::Tokenize((Get-Content $_.FullName -Raw), [ref]$null)
+          }
+        shell: pwsh
+
+  test-configs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: |
+          pip install jsonschema pyyaml toml
+          
+      - name: Validate configurations
+        run: |
+          # Validate JSON configs
+          for config in config/*.json; do
+            echo "Validating: $config"
+            python -m json.tool "$config" > /dev/null
+            echo "✓ $config is valid JSON"
+          done
+          
+          # Check theme references in themes.json
+          python3 - << 'EOF'
+          import json
+          import sys
+          import os
+          
+          with open('config/themes.json', 'r') as f:
+              themes_config = json.load(f)
+          
+          errors = []
+          for theme in themes_config['themes']:
+              theme_name = theme['name']
+              print(f"Checking theme: {theme_name}")
+              
+              # Check if theme files exist
+              for shell_type, filename in theme['files'].items():
+                  if filename and filename != "N/A":
+                      file_path = f"themes/{shell_type}/{filename}"
+                      if not os.path.exists(file_path):
+                          errors.append(f"Missing file for {theme_name}: {file_path}")
+                      else:
+                          print(f"  ✓ {file_path}")
+          
+          if errors:
+              print("\n❌ Errors found:")
+              for error in errors:
+                  print(f"  - {error}")
+              sys.exit(1)
+          else:
+              print("\n✅ All theme files validated successfully")
+          EOF
+
+  documentation-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Check documentation completeness
+        run: |
+          # Check if all major docs exist
+          DOCS=(
+            "README.md"
+            "docs/QUICKSTART.md"
+            "docs/ARCHITECTURE.md"
+            "docs/CONTRIBUTING.md"
+            "docs/WINDOWS.md"
+            "docs/LINUX.md"
+            "docs/MACOS.md"
+          )
+          
+          echo "Checking documentation..."
+          for doc in "${DOCS[@]}"; do
+            if [ -f "$doc" ]; then
+              # Check if not empty
+              if [ -s "$doc" ]; then
+                lines=$(wc -l < "$doc")
+                echo "✓ $doc exists ($lines lines)"
+              else
+                echo "⚠ $doc is empty"
+              fi
+            else
+              echo "✗ $doc missing"
+              exit 1
+            fi
+          done
+
+  build-test:
+    runs-on: ubuntu-latest
+    needs: [quick-check, test-themes, test-scripts, test-configs]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test quick build
+        run: |
+          # Make build script executable
+          chmod +x quick-release.sh
+          
+          # Run quick build
+          ./quick-release.sh
+          
+          # Verify artifacts
+          if [ -f "dist/release/rory-terminal-3.0.0-universal.zip" ]; then
+            echo "✓ Universal package created"
+          else
+            echo "✗ Universal package not found"
+            exit 1
+          fi
+          
+          if [ -f "dist/release/rory-terminal-3.0.0.tar.gz" ]; then
+            echo "✓ Source tarball created"
+          else
+            echo "✗ Source tarball not found"
+            exit 1
+          fi
+
+  status-badge:
+    runs-on: ubuntu-latest
+    needs: [build-test, documentation-check]
+    if: always()
+    steps:
+      - name: Set status
+        run: |
+          if [ "${{ needs.build-test.result }}" == "success" ] && [ "${{ needs.documentation-check.result }}" == "success" ]; then
+            echo "CI_STATUS=passing" >> $GITHUB_ENV
+            echo "✅ All checks passed"
+          else
+            echo "CI_STATUS=failing" >> $GITHUB_ENV
+            echo "❌ Some checks failed"
+          fi

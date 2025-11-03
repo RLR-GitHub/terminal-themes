@@ -1,0 +1,111 @@
+name: Auto Fix Permissions
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fix-permissions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Fix executable permissions
+        run: |
+          # Track if any changes were made
+          CHANGES_MADE=false
+          
+          # Fix shell scripts
+          echo "Fixing shell script permissions..."
+          find . -name "*.sh" -type f | while read -r file; do
+            if [ ! -x "$file" ]; then
+              chmod +x "$file"
+              echo "Fixed: $file"
+              CHANGES_MADE=true
+            fi
+          done
+          
+          # Fix specific executable files
+          EXECUTABLES=(
+            "installers/install.sh"
+            "installers/desktop/rory-terminal-launcher.sh"
+            "installers/desktop/theme-selector-zenity.sh"
+            "installers/matrix-wrapper.sh"
+            "quick-release.sh"
+            "test-deployment.sh"
+            "demo-banner.sh"
+          )
+          
+          for exe in "${EXECUTABLES[@]}"; do
+            if [ -f "$exe" ] && [ ! -x "$exe" ]; then
+              chmod +x "$exe"
+              echo "Fixed: $exe"
+              CHANGES_MADE=true
+            fi
+          done
+          
+          # Save status
+          echo "CHANGES_MADE=$CHANGES_MADE" >> $GITHUB_ENV
+          
+      - name: Fix line endings
+        run: |
+          # Convert CRLF to LF for shell scripts
+          find . -name "*.sh" -type f -exec dos2unix {} \; 2>/dev/null || true
+          
+          # Check if any files were modified
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "CHANGES_MADE=true" >> $GITHUB_ENV
+          fi
+          
+      - name: Commit fixes
+        if: env.CHANGES_MADE == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          
+          git add -A
+          git diff --staged --quiet || git commit -m "🔧 Auto-fix: Set executable permissions and line endings"
+          
+      - name: Push changes
+        if: env.CHANGES_MADE == 'true'
+        run: |
+          git push origin HEAD:${{ github.ref }}
+
+  update-checksums:
+    runs-on: ubuntu-latest
+    needs: fix-permissions
+    if: always()
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          
+      - name: Generate file checksums
+        run: |
+          # Create checksums for important files
+          mkdir -p dist/checksums
+          
+          # Generate checksums for installers
+          find installers -name "*.sh" -o -name "*.ps1" -type f | while read -r file; do
+            sha256sum "$file" >> dist/checksums/installer-checksums.txt
+          done
+          
+          # Generate checksums for themes
+          find themes -type f | while read -r file; do
+            sha256sum "$file" >> dist/checksums/theme-checksums.txt
+          done
+          
+          echo "Checksums generated in dist/checksums/"
+          
+      - name: Upload checksums
+        uses: actions/upload-artifact@v4
+        with:
+          name: file-checksums
+          path: dist/checksums/
+          retention-days: 7
