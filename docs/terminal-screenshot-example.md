@@ -42,7 +42,7 @@ This is what you see when you launch Rory Terminal with the Hacker theme:
 ```
 
 The animation features:
-- ASCII art header "> RORYS MATRIX" in bright green
+- ASCII art header "> RORYS MAZE" in bright green
 - Falling characters including "r0ry.computer" branding
 - Japanese katakana characters mixed with alphanumerics
 - Random red alerts like "ROOT ACCESS"
