@@ -12,10 +12,10 @@ on:
 
 jobs:
   test-script-install-linux:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         distro: [ubuntu-latest, ubuntu-20.04]
+    runs-on: ${{ matrix.distro }}
     steps:
       - uses: actions/checkout@v4
       
