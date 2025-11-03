@@ -129,9 +129,13 @@ echo Rory Terminal for Windows
 echo Version: VERSION_PLACEHOLDER
 pause
 EOF
-sed -i.bak "s/VERSION_PLACEHOLDER/${VERSION}/g" "$WIN_DIR/rory-terminal.cmd" 2>/dev/null || \
-  sed "s/VERSION_PLACEHOLDER/${VERSION}/g" "$WIN_DIR/rory-terminal.cmd" > "$WIN_DIR/rory-terminal.cmd.tmp" && \
-  mv "$WIN_DIR/rory-terminal.cmd.tmp" "$WIN_DIR/rory-terminal.cmd"
+# Replace version placeholder
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i.bak "s/VERSION_PLACEHOLDER/${VERSION}/g" "$WIN_DIR/rory-terminal.cmd"
+    rm -f "$WIN_DIR/rory-terminal.cmd.bak"
+else
+    sed -i "s/VERSION_PLACEHOLDER/${VERSION}/g" "$WIN_DIR/rory-terminal.cmd"
+fi
 
 # Create zip
 cd "$ROOT_DIR/build/windows"
@@ -158,9 +162,13 @@ echo "Rory Terminal for macOS"
 echo "Version: VERSION_PLACEHOLDER"
 ./install.sh
 EOF
-sed -i.bak "s/VERSION_PLACEHOLDER/${VERSION}/g" "$MAC_DIR/rory-terminal.command" 2>/dev/null || \
-  sed "s/VERSION_PLACEHOLDER/${VERSION}/g" "$MAC_DIR/rory-terminal.command" > "$MAC_DIR/rory-terminal.command.tmp" && \
-  mv "$MAC_DIR/rory-terminal.command.tmp" "$MAC_DIR/rory-terminal.command"
+# Replace version placeholder
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i.bak "s/VERSION_PLACEHOLDER/${VERSION}/g" "$MAC_DIR/rory-terminal.command"
+    rm -f "$MAC_DIR/rory-terminal.command.bak"
+else
+    sed -i "s/VERSION_PLACEHOLDER/${VERSION}/g" "$MAC_DIR/rory-terminal.command"
+fi
 chmod +x "$MAC_DIR/rory-terminal.command"
 
 # Create zip
