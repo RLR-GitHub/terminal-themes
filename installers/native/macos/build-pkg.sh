@@ -238,19 +238,25 @@ productbuild --distribution "${BUILD_DIR}/distribution.xml" \
 
 print_success "Product package built"
 
+# Create dist directory and copy package
+mkdir -p "${DIST_DIR}"
+cp "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}.pkg" "${DIST_DIR}/"
+
 # Output location
 print_step "Package created: ${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}.pkg"
+print_success "Package copied to: ${DIST_DIR}/${PACKAGE_NAME}-${VERSION}.pkg"
 
 # Optional: Sign package (requires developer certificate)
-if [[ -n "${SIGNING_IDENTITY}" ]]; then
+if [[ -n "${SIGNING_IDENTITY:-}" ]]; then
     print_step "Signing package..."
     productsign --sign "$SIGNING_IDENTITY" \
-                "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}.pkg" \
-                "${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}-signed.pkg"
+                "${DIST_DIR}/${PACKAGE_NAME}-${VERSION}.pkg" \
+                "${DIST_DIR}/${PACKAGE_NAME}-${VERSION}-signed.pkg"
     print_success "Package signed"
 fi
 
 print_success "macOS installer build complete!"
 echo ""
-echo "Install with: sudo installer -pkg ${BUILD_DIR}/${PACKAGE_NAME}-${VERSION}.pkg -target /"
+echo "Package location: ${DIST_DIR}/${PACKAGE_NAME}-${VERSION}.pkg"
+echo "Install with: sudo installer -pkg ${DIST_DIR}/${PACKAGE_NAME}-${VERSION}.pkg -target /"
 

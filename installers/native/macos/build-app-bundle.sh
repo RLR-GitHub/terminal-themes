@@ -3,13 +3,14 @@
 
 set -e
 
+VERSION="${1:-3.0.0}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 APP_DIR="$SCRIPT_DIR/RoryTerminal.app"
 BUILD_DIR="$PROJECT_ROOT/build/macos"
 DIST_DIR="$PROJECT_ROOT/dist/macos"
 
-echo "Building Rory Terminal.app..."
+echo "Building Rory Terminal.app v${VERSION}..."
 
 # Create build directories
 mkdir -p "$BUILD_DIR"
@@ -100,7 +101,7 @@ echo "Application bundle created: $APP_BUILD"
 
 # Create DMG installer
 echo "Creating DMG installer..."
-DMG_NAME="RoryTerminal-3.0.0"
+DMG_NAME="RoryTerminal-${VERSION}"
 DMG_PATH="$DIST_DIR/${DMG_NAME}.dmg"
 VOLUME_NAME="Rory Terminal"
 

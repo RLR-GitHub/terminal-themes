@@ -36,7 +36,7 @@ jobs:
     needs: set-version
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -47,33 +47,39 @@ jobs:
             rpm \
             snapd \
             flatpak \
-            flatpak-builder
-      
+            flatpak-builder \
+            fuse \
+            libfuse2
+
       - name: Build DEB package
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/linux
           chmod +x build-deb.sh
-          ./build-deb.sh
-          
-      - name: Build RPM package  
+          ./build-deb.sh "$VERSION"
+
+      - name: Build RPM package
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/linux
           chmod +x build-rpm.sh
-          ./build-rpm.sh
-          
+          ./build-rpm.sh "$VERSION"
+
       - name: Build AppImage
+        continue-on-error: true
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/linux
           chmod +x build-appimage.sh
-          ./build-appimage.sh
-          
+          ./build-appimage.sh "$VERSION"
+
       - name: Build Snap package
         continue-on-error: true
         run: |
           sudo snap install snapcraft --classic
           cd installers/native/linux/snap
           snapcraft
-          
+
       - name: Upload Linux packages
         uses: actions/upload-artifact@v3
         if: success() || failure()
@@ -92,23 +98,26 @@ jobs:
     needs: set-version
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install dependencies
         run: |
           brew install create-dmg
-          
+
       - name: Build PKG installer
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/macos
           chmod +x build-pkg.sh
-          ./build-pkg.sh
-          
+          ./build-pkg.sh "$VERSION"
+
       - name: Build App Bundle and DMG
+        continue-on-error: true
         run: |
+          VERSION="${{ needs.set-version.outputs.version }}"
           cd installers/native/macos
           chmod +x build-app-bundle.sh
-          ./build-app-bundle.sh
-          
+          ./build-app-bundle.sh "$VERSION"
+
       - name: Sign packages (if certificate available)
         if: ${{ env.MACOS_CERTIFICATE }}
         env:
@@ -119,7 +128,7 @@ jobs:
           # codesign --deep --force --verify --verbose \
           #   --sign "$MACOS_CERTIFICATE" \
           #   dist/macos/*.app dist/macos/*.pkg
-          
+
       - name: Upload macOS packages
         uses: actions/upload-artifact@v3
         if: success() || failure()
@@ -136,25 +145,25 @@ jobs:
     needs: set-version
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install WiX Toolset
         run: |
           choco install wixtoolset -y
-          
+
       - name: Build MSI installer
         shell: powershell
         run: |
           $VERSION = "${{ needs.set-version.outputs.version }}"
           cd installers/native/windows
           .\build-msi.ps1 -Version $VERSION
-          
+
       - name: Build Chocolatey package
         shell: powershell
         run: |
           $VERSION = "${{ needs.set-version.outputs.version }}"
           cd installers/native/windows
           .\build-packages.ps1 -Version $VERSION -Chocolatey
-          
+
       - name: Sign packages (if certificate available)
         if: ${{ env.WINDOWS_CERTIFICATE }}
         shell: powershell
@@ -164,7 +173,7 @@ jobs:
         run: |
           Write-Host "Code signing would happen here"
           # signtool sign /f cert.pfx /p $env:WINDOWS_CERTIFICATE_PWD dist\windows\*.msi
-          
+
       - name: Upload Windows packages
         uses: actions/upload-artifact@v3
         if: success() || failure()
@@ -181,14 +190,14 @@ jobs:
     needs: set-version
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Create source tarball
         run: |
           VERSION="${{ needs.set-version.outputs.version }}"
           mkdir -p dist/source
           git archive --format=tar.gz --prefix=rory-terminal-${VERSION}/ \
             -o dist/source/rory-terminal-${VERSION}.tar.gz HEAD
-            
+
       - name: Create universal zip
         run: |
           VERSION="${{ needs.set-version.outputs.version }}"
@@ -196,7 +205,7 @@ jobs:
           zip -r dist/universal/rory-terminal-${VERSION}-universal.zip \
             core themes config installers docs README.md LICENSE \
             -x "*.git*" "*/.DS_Store" "*/build/*" "*/dist/*"
-            
+
       - name: Upload universal packages
         uses: actions/upload-artifact@v3
         if: success() || failure()
@@ -214,7 +223,7 @@ jobs:
     steps:
       - name: Download all artifacts
         uses: actions/download-artifact@v3
-        
+
       - name: Generate checksums
         run: |
           mkdir -p checksums
@@ -222,7 +231,7 @@ jobs:
             -o -name "*.snap" -o -name "*.pkg" -o -name "*.dmg" \
             -o -name "*.msi" -o -name "*.nupkg" -o -name "*.tar.gz" \
             -o -name "*.zip" \) -exec sha256sum {} \; > checksums/SHA256SUMS
-          
+
       - name: Upload checksums
         uses: actions/upload-artifact@v3
         if: success() || failure()
