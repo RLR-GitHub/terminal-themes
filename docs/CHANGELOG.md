@@ -1,5 +1,7 @@
 # Changelog
 
+<!-- markdownlint-disable MD024 -->
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -8,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.0.0] - 2024-11-02
 
 ### Added
+
 - 🎃 Halloween theme with spooky orange/black color scheme
 - 🎄 Christmas theme with festive red/green colors
 - 🐰 Easter theme with pastel rainbow colors
@@ -27,12 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 📊 Repository badges and stats
 
 ### Changed
+
 - Improved animation performance with optimized sleep timings
 - Enhanced cleanup function for better terminal restoration
 - Updated ANSI color codes to use full 256-color palette
 - Restructured repository for better organization
 
 ### Technical Details
+
 - Uses alternate screen buffer (`\e[?1049h`) for clean animation
 - Implements proper signal handling (SIGINT, SIGTERM)
 - 256-color ANSI escape sequences for rich colors
@@ -42,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.0.0] - 2024-10-15
 
 ### Added
+
 - Initial multi-theme support
 - Custom symbol sets for different themes
 - Alert message system with random flashing
@@ -49,11 +55,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Katakana character support
 
 ### Changed
+
 - Refactored core animation engine
 - Improved random symbol selection
 - Better terminal dimension detection
 
 ### Fixed
+
 - Screen buffer restoration issues
 - Cursor visibility problems on exit
 - Race conditions in background processes
@@ -61,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2024-09-01
 
 ### Added
+
 - Initial release
 - Basic Matrix rain animation
 - Green color scheme
@@ -68,6 +77,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Basic README documentation
 
 ### Features
+
 - Pure bash implementation
 - No external dependencies
 - Falling character animation
@@ -76,6 +86,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Fixed
+
 - Fixed GitHub Actions `test-install.yml` workflow matrix reference errors
 - Fixed impossible job dependency constraints in workflow
 - Added proper error handling for missing artifacts
@@ -83,12 +94,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved Windows package testing with proper MSI uninstall
 
 ### Changed
+
 - Test script installation jobs now only run on `workflow_dispatch` and `pull_request` events
 - Native package testing jobs now only run on `workflow_run` events
 - Removed redundant conditions in workflow steps
 - Consolidated install/uninstall testing into single jobs per platform
 
 ### Planned Features
+
 - [ ] Additional holiday themes (Valentine's, St. Patrick's, etc.)
 - [ ] Configuration file support (~/.matrixrc)
 - [ ] Theme switcher command
@@ -103,12 +116,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] Plugin system for custom effects
 
 ### Known Issues
+
 - Emoji rendering may vary by terminal emulator
 - Performance may degrade on very large terminals (>300 columns)
 - Some terminals may not support all 256 colors
 - Minimal WSL1 support (WSL2 recommended)
 
 ### Future Enhancements
+
 - Gradient color transitions
 - Multiple simultaneous rain streams
 - Configurable symbol density
@@ -122,6 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Release Notes Format
 
 Each release includes:
+
 - **Version number** (Semantic Versioning)
 - **Release date**
 - **Added**: New features
@@ -148,12 +164,14 @@ Each release includes:
 ### From 2.0 to 3.0
 
 1. Backup your current configuration:
+
    ```bash
    cp ~/matrix.sh ~/matrix.sh.backup
    cp ~/.bashrc ~/.bashrc.backup
    ```
 
 2. Install new version:
+
    ```bash
    curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/install.sh | bash
    ```
@@ -165,6 +183,7 @@ Each release includes:
 Significant changes require clean installation:
 
 1. Remove old script:
+
    ```bash
    rm ~/matrix.sh
    ```
@@ -172,6 +191,7 @@ Significant changes require clean installation:
 2. Clean old configuration from shell config
 
 3. Run new installer:
+
    ```bash
    curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/install.sh | bash
    ```
@@ -181,6 +201,7 @@ Significant changes require clean installation:
 ## Contributors
 
 Special thanks to all contributors who have helped with:
+
 - 🐛 Bug reports and fixes
 - 💡 Feature suggestions
 - 🎨 Theme designs
@@ -194,6 +215,7 @@ See the full list of [contributors](https://github.com/RLR-GitHub/terminal-theme
 ## Support
 
 For questions or issues with specific versions:
+
 - [Open an Issue](https://github.com/RLR-GitHub/terminal-themes/issues)
 - [Email Support](mailto:rodericklrenwick@gmail.com)
 - [Discussion Forum](https://github.com/RLR-GitHub/terminal-themes/discussions)

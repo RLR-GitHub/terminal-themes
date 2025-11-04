@@ -5,11 +5,13 @@ Complete guide for installing Rory Terminal Themes on Windows.
 ## Quick Install
 
 ### One-Line Install (PowerShell)
+
 ```powershell
 iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
 ```
 
 ### Manual Install
+
 1. Download `install.ps1`
 2. Run: `powershell -ExecutionPolicy Bypass -File install.ps1`
 
@@ -20,6 +22,7 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 - **Windows Terminal** (optional but recommended)
 
 ### Check PowerShell Version
+
 ```powershell
 $PSVersionTable.PSVersion
 ```
@@ -27,37 +30,45 @@ $PSVersionTable.PSVersion
 ## Installation Options
 
 ### Option 1: Starship (Recommended)
+
 Modern cross-platform prompt with theme support.
 
 **Installs:**
+
 - Starship prompt
 - Theme configurations
 - PowerShell profile integration
 
 **Best for:**
+
 - Daily use
 - Professional environments
 - Cross-platform consistency
 
 ### Option 2: Matrix Only
+
 Just the Matrix rain animations.
 
 **Installs:**
+
 - PowerShell Matrix scripts
 - Basic theme support
 
 **Best for:**
+
 - Minimal installation
 - Fun animations only
 
 ## Post-Installation
 
 ### Reload Profile
+
 ```powershell
 . $PROFILE
 ```
 
 ### Check Installation
+
 ```powershell
 Get-Command starship
 $env:RORY_THEME
@@ -86,16 +97,19 @@ scoop install FiraCode-NF
 ## Package Managers
 
 ### winget
+
 ```powershell
 winget install Starship.Starship
 ```
 
 ### Scoop
+
 ```powershell
 scoop install starship
 ```
 
 ### Chocolatey
+
 ```powershell
 choco install starship
 ```
@@ -103,11 +117,13 @@ choco install starship
 ## Themes
 
 ### List Themes
+
 ```powershell
 Get-RoryTheme
 ```
 
 ### Change Theme
+
 ```powershell
 Set-RoryTheme halloween
 Set-RoryTheme christmas
@@ -117,6 +133,7 @@ Set-RoryTheme matrix
 ```
 
 ### Run Matrix Animation
+
 ```powershell
 matrix
 matrix -Init  # 5-second intro
@@ -125,35 +142,44 @@ matrix -Init  # 5-second intro
 ## Troubleshooting
 
 ### Execution Policy Error
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
 ### Profile Not Loading
+
 Check profile location:
+
 ```powershell
 $PROFILE
 Test-Path $PROFILE
 ```
 
 Create if missing:
+
 ```powershell
 New-Item -Path $PROFILE -Type File -Force
 ```
 
 ### Starship Not Found
+
 Ensure PATH includes Starship:
+
 ```powershell
 $env:PATH -split ';' | Select-String starship
 ```
 
 Add to PATH if needed:
+
 ```powershell
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\starship\bin", "User")
 ```
 
 ### Colors Not Showing
+
 Enable ANSI colors:
+
 ```powershell
 Set-ItemProperty HKCU:\Console VirtualTerminalLevel -Type DWORD 1
 ```
@@ -161,12 +187,15 @@ Set-ItemProperty HKCU:\Console VirtualTerminalLevel -Type DWORD 1
 ## Uninstallation
 
 ### Via Installer
+
 ```powershell
 .\install.ps1 -Uninstall
 ```
 
 ### Manual Uninstall
+
 1. Remove installation directory:
+
    ```powershell
    Remove-Item "$env:LOCALAPPDATA\RoryTerminal" -Recurse -Force
    ```
@@ -181,6 +210,7 @@ Set-ItemProperty HKCU:\Console VirtualTerminalLevel -Type DWORD 1
 ### Custom Profile Integration
 
 Add to `$PROFILE`:
+
 ```powershell
 # Rory Terminal Custom Configuration
 $env:RORY_THEME = "hacker"
@@ -199,6 +229,7 @@ Invoke-Expression (&starship init powershell)
 ### Windows Terminal Custom Color Scheme
 
 Add to `settings.json`:
+
 ```json
 {
   "schemes": [
@@ -242,7 +273,6 @@ Add to `settings.json`:
 
 ## Support
 
-- GitHub Issues: https://github.com/RLR-GitHub/terminal-themes/issues
-- Documentation: https://github.com/RLR-GitHub/terminal-themes
-- Email: rodericklrenwick@gmail.com
-
+- GitHub Issues: <https://github.com/RLR-GitHub/terminal-themes/issues>
+- Documentation: <https://github.com/RLR-GitHub/terminal-themes>
+- Email: <rodericklrenwick@gmail.com>

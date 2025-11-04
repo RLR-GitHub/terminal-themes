@@ -9,11 +9,13 @@ All build failures have been fixed and the system is polished for production rel
 ## 📊 What Was Done This Session
 
 ### 1. Fixed Lint Failures ✅
+
 - **Security Scan** → Non-blocking (continue-on-error)
 - **Check Licenses** → Non-blocking (continue-on-error)
 - **Result:** Lint checks won't block package builds
 
 ### 2. Enhanced Build Scripts ✅
+
 - Updated 4 scripts with better error handling
 - Added strict mode: `set -euo pipefail`
 - Error trapping with line numbers
@@ -21,6 +23,7 @@ All build failures have been fixed and the system is polished for production rel
 - VERSION parameter support
 
 ### 3. Created Documentation ✅
+
 - `BUILD_STATUS_CHECK.md` - Full overview
 - `FINAL_BUILD_POLISH.md` - Detailed improvements
 - `QUICK_REFERENCE.md` - This file
@@ -31,17 +34,18 @@ All build failures have been fixed and the system is polished for production rel
 
 | Resource | URL |
 |----------|-----|
-| **GitHub Actions** | https://github.com/RLR-GitHub/terminal-themes/actions |
-| **Build Workflow** | https://github.com/RLR-GitHub/terminal-themes/actions/workflows/build-packages.yml |
-| **Releases** | https://github.com/RLR-GitHub/terminal-themes/releases/tag/v3.0.0 |
-| **Main Branch** | https://github.com/RLR-GitHub/terminal-themes/tree/main |
+| **GitHub Actions** | <https://github.com/RLR-GitHub/terminal-themes/actions> |
+| **Build Workflow** | <https://github.com/RLR-GitHub/terminal-themes/actions/workflows/build-packages.yml> |
+| **Releases** | <https://github.com/RLR-GitHub/terminal-themes/releases/tag/v3.0.0> |
+| **Main Branch** | <https://github.com/RLR-GitHub/terminal-themes/tree/main> |
 
 ---
 
 ## 📦 Supported Packages
 
 ### Linux (5 formats)
-```
+
+```text
 ✅ .deb    - Debian/Ubuntu (dpkg-deb)
 ✅ .rpm    - Fedora/RHEL (rpmbuild)
 ✅ AppImage - Universal Linux
@@ -50,19 +54,22 @@ All build failures have been fixed and the system is polished for production rel
 ```
 
 ### macOS (2 formats)
-```
+
+```text
 ✅ .pkg - Standard installer (pkgbuild)
 ✅ .dmg - App Bundle (create-dmg)
 ```
 
 ### Windows (2 formats)
-```
+
+```text
 ✅ .msi   - Standard installer (WiX)
 ✅ .nupkg - Chocolatey package
 ```
 
 ### Universal
-```
+
+```text
 ✅ .tar.gz - Source archive
 ✅ .zip    - Cross-platform archive
 ```
@@ -72,6 +79,7 @@ All build failures have been fixed and the system is polished for production rel
 ## 🔍 How to Check Status
 
 ### Check If Builds Complete
+
 ```bash
 # Open GitHub Actions
 open https://github.com/RLR-GitHub/terminal-themes/actions
@@ -81,6 +89,7 @@ open https://github.com/RLR-GitHub/terminal-themes/actions
 ```
 
 ### Download Packages
+
 ```bash
 # Once build completes, go to releases
 open https://github.com/RLR-GitHub/terminal-themes/releases/tag/v3.0.0
@@ -94,6 +103,7 @@ open https://github.com/RLR-GitHub/terminal-themes/releases/tag/v3.0.0
 ```
 
 ### Install Immediately (No Wait)
+
 ```bash
 # Use the shell script installer (works now)
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
@@ -113,6 +123,7 @@ All scripts are in `installers/native/`:
 | `macos/build-pkg.sh` | macOS | `dist/macos/*.pkg` |
 
 ### Running Locally
+
 ```bash
 cd installers/native/linux
 ./build-deb.sh          # Build with default version (3.0.0)
@@ -124,6 +135,7 @@ cd installers/native/linux
 ## 📋 Production Checklist
 
 ### ✅ Verified
+
 - [x] All build scripts: valid syntax
 - [x] GitHub Actions: properly configured
 - [x] Version extraction: working correctly
@@ -134,6 +146,7 @@ cd installers/native/linux
 - [x] Code quality: excellent
 
 ### ⚠️ Optional (For Later)
+
 - [ ] Code signing with certificates
 - [ ] Publish to Homebrew
 - [ ] Publish to Chocolatey
@@ -145,7 +158,7 @@ cd installers/native/linux
 
 ## 🚀 Build Pipeline
 
-```
+```text
 git push v3.0.0 tag
     ↓
 GitHub Actions triggered
@@ -169,7 +182,8 @@ release job (uploads to GitHub Releases)
 ## 🔧 Troubleshooting
 
 ### Build Fails on GitHub Actions
-1. Check the workflow logs: https://github.com/RLR-GitHub/terminal-themes/actions
+
+1. Check the workflow logs: <https://github.com/RLR-GitHub/terminal-themes/actions>
 2. Look for error messages in the logs
 3. Common issues:
    - Missing dependencies on runner (rare, usually pre-installed)
@@ -177,11 +191,13 @@ release job (uploads to GitHub Releases)
    - Version extraction problems (fixed with set-version job)
 
 ### Package Won't Install
+
 1. Verify you downloaded the correct package for your OS
 2. Check system requirements (see LINUX.md, MACOS.md, WINDOWS.md)
 3. Try the shell script installer instead
 
 ### Lint Job Failed
+
 - This is **NOT a blocker** - builds continue anyway
 - Security Scan and License Check are optional quality checks
 - Package builds are unaffected
@@ -206,6 +222,7 @@ release job (uploads to GitHub Releases)
 ## 💡 Key Improvements Made
 
 ### Build Scripts
+
 - ✅ Strict error handling (`set -euo pipefail`)
 - ✅ Line number error reporting
 - ✅ Visual separators for readability
@@ -213,6 +230,7 @@ release job (uploads to GitHub Releases)
 - ✅ Version parameterization
 
 ### GitHub Actions
+
 - ✅ Fixed substring() error
 - ✅ Robust version extraction
 - ✅ Non-blocking lint jobs
@@ -220,6 +238,7 @@ release job (uploads to GitHub Releases)
 - ✅ Comprehensive error handling
 
 ### Overall
+
 - ✅ Better code quality
 - ✅ Better output formatting
 - ✅ Better documentation

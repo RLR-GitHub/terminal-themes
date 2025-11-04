@@ -9,6 +9,7 @@ The terminal-themes project has been successfully refactored and reorganized fro
 ### Phase 1: Repository Reorganization ✅
 
 **Extracted & Organized:**
+
 - ✅ 5 bash theme scripts extracted from HTML into `themes/bash/`
 - ✅ Complete directory structure created
 - ✅ Documentation organized in `docs/`
@@ -16,7 +17,8 @@ The terminal-themes project has been successfully refactored and reorganized fro
 - ✅ Installers in `installers/`
 
 **New Structure:**
-```
+
+```text
 terminal-themes/
 ├── core/                    # Core modules
 │   ├── option1-starship/    # Starship integration
@@ -50,12 +52,14 @@ terminal-themes/
 ### Phase 2: Core Module Implementation ✅
 
 **Option #1: Starship Integration (Simple)**
+
 - ✅ `starship-integration.sh` - Starship installer with OS detection
 - ✅ `zsh-plugins.sh` - Syntax highlighting & autosuggestions
 - ✅ `modern-tools.sh` - eza, bat, delta installation
 - ✅ `theme-manager.sh` - Theme switching & management
 
 **Option #2: PTY Shim (Advanced)**
+
 - ✅ `pty-wrapper.c` - C pseudoterminal interceptor
 - ✅ `color-rules.json` - Pattern matching configuration
 - ✅ `command-hooks.sh` - Pre/post command hooks
@@ -65,6 +69,7 @@ terminal-themes/
 ### Phase 3: Cross-Platform Themes ✅
 
 **PowerShell Themes (Windows)**
+
 - ✅ Matrix-Halloween.ps1
 - ✅ Matrix-Christmas.ps1
 - ✅ Matrix-Easter.ps1
@@ -72,6 +77,7 @@ terminal-themes/
 - ✅ Matrix-Classic.ps1
 
 **Starship Themes (Universal)**
+
 - ✅ halloween.toml
 - ✅ christmas.toml
 - ✅ easter.toml
@@ -79,12 +85,14 @@ terminal-themes/
 - ✅ matrix.toml
 
 **Universal Aliases**
+
 - ✅ common-aliases.sh (Unix)
 - ✅ common-aliases.ps1 (Windows)
 
 ### Phase 4: Installation System ✅
 
 **Smart Installers**
+
 - ✅ `install.sh` - Unix installer with:
   - OS detection (macOS, Ubuntu, Fedora, Arch, etc.)
   - Shell detection (bash, zsh, fish)
@@ -105,17 +113,20 @@ terminal-themes/
 **Native Packages**
 
 **macOS (.pkg)**
+
 - ✅ `build-pkg.sh` - Package builder
 - ✅ `postinstall` - Post-installation script
 - ✅ `uninstall.sh` - Uninstaller
 - Creates signed .pkg installer
 
 **Windows (.msi)**
+
 - ✅ `build-msi.ps1` - MSI builder (WiX)
 - ✅ `Product.wxs` - WiX configuration
 - Creates Windows installer with Start Menu integration
 
 **Linux**
+
 - ✅ `build-deb.sh` - Debian/Ubuntu package
 - ✅ `build-rpm.sh` - Fedora/RHEL package
 - ✅ `build-appimage.sh` - Universal AppImage
@@ -123,29 +134,34 @@ terminal-themes/
 ### Phase 5: Documentation ✅
 
 **Architecture & Guides**
+
 - ✅ `ARCHITECTURE.md` - Complete system architecture
 - ✅ `WINDOWS.md` - Windows-specific guide
 - ✅ `MACOS.md` - macOS-specific guide
 - ✅ `LINUX.md` - Linux-specific guide
 
 **Configuration**
+
 - ✅ `config/themes.json` - Theme metadata & color definitions
 - ✅ `config/default.json` - Default configuration
 
 ## Key Features
 
 ### Multi-Platform Support
+
 - **macOS**: Terminal.app, iTerm2
 - **Linux**: GNOME Terminal, Alacritty, kitty, etc.
 - **Windows**: PowerShell, Windows Terminal
 
 ### Multi-Shell Support
+
 - **Unix**: bash, zsh, fish
 - **Windows**: PowerShell 5.1+, PowerShell 7+, CMD
 
 ### Two Installation Approaches
 
 **Option #1: Simple (Starship)**
+
 - Cross-platform prompt customization
 - Modern CLI tools (eza, bat, delta)
 - Easy theme switching
@@ -153,6 +169,7 @@ terminal-themes/
 - **Recommended for most users**
 
 **Option #2: Advanced (PTY Shim)**
+
 - Deep output interception
 - Custom color injection
 - Command-specific styling
@@ -160,6 +177,7 @@ terminal-themes/
 - **For power users (Unix only)**
 
 ### Five Unique Themes
+
 1. **🎃 Halloween** - Spooky orange/black
 2. **🎄 Christmas** - Festive red/green
 3. **🐰 Easter** - Pastel rainbow
@@ -167,6 +185,7 @@ terminal-themes/
 5. **🟢 Matrix** - Classic green
 
 Each theme available in:
+
 - Bash script (Matrix animation)
 - PowerShell script (Windows)
 - Starship config (cross-platform prompt)
@@ -176,16 +195,19 @@ Each theme available in:
 ### Quick Install (One-Line)
 
 **Unix (macOS/Linux)**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
 **Windows (PowerShell)**
+
 ```powershell
 iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
 ```
 
 ### Native Packages
+
 - **macOS**: `RoryTerminal-3.0.0.pkg`
 - **Windows**: `RoryTerminal-3.0.0.msi`
 - **Debian/Ubuntu**: `rory-terminal_3.0.0_all.deb`
@@ -195,24 +217,28 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 ## Technical Implementation
 
 ### Modular Architecture
+
 - Separation of concerns (Option #1 vs Option #2)
 - Platform-specific implementations
 - Shared configuration system
 - Theme registry
 
 ### Smart Detection
+
 - Automatic OS detection
 - Shell environment detection
 - Package manager detection
 - Dependency resolution
 
 ### Configuration Management
+
 - JSON-based configuration
 - Theme metadata
 - Platform capabilities
 - User preferences
 
 ### Build System
+
 - Native package builders for all platforms
 - Automated compilation (PTY shim)
 - Signing support
@@ -223,6 +249,7 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 **Total Files Created/Modified:** ~80+
 
 **Code Distribution:**
+
 - Bash scripts: ~30 files
 - PowerShell scripts: ~10 files
 - Configuration files: ~15 files
@@ -235,6 +262,7 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 ## Testing Coverage
 
 The implementation includes provisions for testing across:
+
 - ✅ macOS (Terminal, iTerm2)
 - ✅ Windows (PowerShell, Windows Terminal, CMD)
 - ✅ Linux (Ubuntu, Fedora, Arch)
@@ -245,6 +273,7 @@ The implementation includes provisions for testing across:
 ## Next Steps for Deployment
 
 1. **Create GitHub Repository**
+
    ```bash
    git init
    git add .
@@ -254,6 +283,7 @@ The implementation includes provisions for testing across:
    ```
 
 2. **Build Native Packages**
+
    ```bash
    # macOS
    cd installers/native/macos && ./build-pkg.sh
@@ -281,6 +311,7 @@ The implementation includes provisions for testing across:
 ## Success Metrics
 
 ✅ **All 15 planned todos completed**
+
 - Core modules implemented
 - Cross-platform support added
 - Native installers created
@@ -288,12 +319,14 @@ The implementation includes provisions for testing across:
 - Testing provisions made
 
 ✅ **Production-Ready**
+
 - Clean, modular architecture
 - Comprehensive error handling
 - Platform-specific optimizations
 - Professional documentation
 
 ✅ **Scalable & Maintainable**
+
 - Easy to add new themes
 - Simple to extend platforms
 - Clear contribution guidelines
@@ -311,4 +344,3 @@ The Rory Terminal Themes project has been successfully transformed from a simple
 **Date:** November 3, 2024  
 **Author:** Roderick Lawrence Renwick (Rory)  
 **License:** MIT
-

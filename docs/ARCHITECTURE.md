@@ -11,7 +11,7 @@ The project is designed around two installation options:
 
 ## Directory Structure
 
-```
+```text
 terminal-themes/
 ├── core/                         # Core modules
 │   ├── option1-starship/         # Starship integration
@@ -34,7 +34,7 @@ terminal-themes/
 
 ## Option #1: Starship Architecture
 
-### Components
+### Starship Components
 
 1. **Starship Integration (`starship-integration.sh`)**
    - Detects OS and package manager
@@ -59,9 +59,9 @@ terminal-themes/
    - Runs Matrix animations
    - Manages configuration
 
-### Data Flow
+### Starship Data Flow
 
-```
+```text
 User Command → Shell → Starship → Theme Config → Styled Prompt
               ↓
          Modern Tools → Enhanced Output
@@ -75,7 +75,7 @@ User Command → Shell → Starship → Theme Config → Styled Prompt
 
 ## Option #2: PTY Shim Architecture
 
-### Components
+### PTY Shim Components
 
 1. **PTY Wrapper (`pty-wrapper.c`)**
    - C program that creates pseudoterminal
@@ -100,9 +100,9 @@ User Command → Shell → Starship → Theme Config → Styled Prompt
    - Pattern colorization
    - Streaming transformation
 
-### Data Flow
+### PTY Shim Data Flow
 
-```
+```text
 User Command → PTY Wrapper → Command Execution
                     ↓
               Output Stream → Color Injection → Terminal Display
@@ -119,25 +119,29 @@ sudo make install
 ```
 
 Installs to:
+
 - `/usr/local/bin/pty-wrapper`
 - `/usr/local/bin/rory-terminal-hooks`
 - `/usr/local/bin/rory-terminal-parser`
 
 ## Platform Implementations
 
-### macOS
+### macOS Implementation
+
 - **Package Manager**: Homebrew preferred
 - **Shells**: bash, zsh (default)
 - **Terminal**: Terminal.app, iTerm2
 - **Native Package**: .pkg installer
 
-### Linux
+### Linux Implementation
+
 - **Package Managers**: apt, dnf, pacman, zypper
 - **Shells**: bash, zsh, fish
 - **Terminals**: GNOME Terminal, Alacritty, kitty
 - **Native Packages**: .deb, .rpm, AppImage
 
-### Windows
+### Windows Implementation
+
 - **Package Managers**: winget, scoop, chocolatey
 - **Shells**: PowerShell 5.1+, PowerShell 7+
 - **Terminal**: Windows Terminal (recommended), PowerShell ISE
@@ -168,6 +172,7 @@ Each theme consists of:
 ### Theme Colors
 
 Each theme defines:
+
 - Primary color (main accent)
 - Secondary color (secondary elements)
 - Accent color (highlights)
@@ -176,9 +181,9 @@ Each theme defines:
 
 ## Installation Flow
 
-### Unix (Linux/macOS)
+### Unix Installation (Linux/macOS)
 
-```
+```text
 install.sh → Detect OS/Shell
           → Select Option (Starship/PTY/Matrix-only)
           → Select Theme
@@ -187,9 +192,9 @@ install.sh → Detect OS/Shell
           → Complete
 ```
 
-### Windows
+### Windows Installation
 
-```
+```text
 install.ps1 → Check PowerShell Version
            → Check Windows Terminal
            → Select Option (Starship/Matrix-only)
@@ -204,6 +209,7 @@ install.ps1 → Check PowerShell Version
 ### User Configuration
 
 `~/.config/rory-terminal/config.json`:
+
 ```json
 {
   "version": "3.0.0",
@@ -217,6 +223,7 @@ install.ps1 → Check PowerShell Version
 ### Theme Registry
 
 `config/themes.json`:
+
 ```json
 {
   "themes": {
@@ -250,11 +257,13 @@ install.ps1 → Check PowerShell Version
 ## Performance Considerations
 
 ### Option #1 (Starship)
+
 - Fast: ~1-5ms prompt latency
 - Minimal overhead
 - Async git operations
 
 ### Option #2 (PTY Shim)
+
 - Moderate: ~1-2ms per command
 - Pattern matching overhead
 - Real-time processing
@@ -270,9 +279,9 @@ install.ps1 → Check PowerShell Version
 ## Future Architecture
 
 Planned improvements:
+
 - Plugin system for custom themes
 - Configuration GUI
 - Cloud theme sync
 - Performance profiling
 - Windows PTY support (if possible)
-

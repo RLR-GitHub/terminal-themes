@@ -5,14 +5,18 @@
 All code-side fixes have been applied and pushed. To check the actual build status:
 
 ### Step 1: View GitHub Actions
-Go to: https://github.com/RLR-GitHub/terminal-themes/actions
+
+Go to: <https://github.com/RLR-GitHub/terminal-themes/actions>
 
 Look for workflows running for:
+
 - Tag `v3.0.0`
 - Recent commits (77caafb, a22b739, etc.)
 
 ### Step 2: Check Workflow Runs
+
 Click on any running or failed workflow to see:
+
 - Which jobs passed/failed
 - Specific error messages in logs
 - Build artifacts (if any were created)
@@ -20,21 +24,25 @@ Click on any running or failed workflow to see:
 ### Step 3: Common Failure Points to Check
 
 #### If "Build Linux Packages" fails:
+
 - Check if `dpkg-deb` is available in ubuntu-latest
 - Check if paths to core/themes/config are correct
 - Look for "No such file or directory" errors
 
 #### If "Build macOS Packages" fails:
+
 - Check if `create-dmg` installed correctly
 - Check if `pkgbuild` command succeeded
 - Look for permission or path errors
 
 #### If "Build Windows Packages" fails:
+
 - Check if WiX Toolset installed correctly
 - Check PowerShell execution policy
 - Look for path separator issues (\ vs /)
 
 #### If "Build Snap package" fails:
+
 - This is marked as `continue-on-error: true`
 - It should not block other builds
 - Snap may fail in CI but that's acceptable
@@ -71,20 +79,25 @@ Based on the fixes applied:
 Common issues that might still occur:
 
 ### Issue: "No such file or directory"
+
 **Solution:** The script paths might still need adjustment. Check the actual error message.
 
 ### Issue: "dpkg-deb: command not found"
+
 **Solution:** The package should be in ubuntu-latest. This would be unusual.
 
 ### Issue: "Permission denied"
+
 **Solution:** Already addressed with `chmod +x` in workflow.
 
 ### Issue: Snap build timeout
+
 **Solution:** Already addressed with `continue-on-error: true`.
 
 ## Getting Real-Time Status
 
 To see live build logs:
+
 1. Go to Actions tab
 2. Click on the running workflow
 3. Click on a job (e.g., "Build Linux Packages")

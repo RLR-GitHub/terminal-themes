@@ -2,7 +2,7 @@
 
 When you launch Rory Terminal, you're greeted with this stunning ASCII art banner:
 
-```
+```text
   >
 
   #      ######    ######   #    #  #####
@@ -24,6 +24,7 @@ When you launch Rory Terminal, you're greeted with this stunning ASCII art banne
 ```
 
 The banner colors change based on your selected theme:
+
 - 🎃 **Halloween**: Orange and light orange
 - 🎄 **Christmas**: Red and green  
 - 🐰 **Easter**: Pink and light blue

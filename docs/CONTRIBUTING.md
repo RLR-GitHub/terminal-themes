@@ -17,7 +17,7 @@ The following is a set of guidelines for contributing to Rory's Terminal Theme C
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to rodericklrenwick@gmail.com.
+This project and everyone participating in it is governed by our Code of Conduct. By participating, you are expected to uphold this code. Please report unacceptable behavior to <rodericklrenwick@gmail.com>.
 
 ## How Can I Contribute?
 
@@ -51,9 +51,11 @@ We love new themes! Here's how to create one:
 1. **Fork the repository**
 2. **Create your theme branch** (`git checkout -b theme/your-theme-name`)
 3. **Copy an existing theme as a template**
+
    ```bash
    cp themes/matrix-classic.sh themes/matrix-yourtheme.sh
    ```
+
 4. **Customize your theme:**
    - Update `SYMBOLS` with relevant characters/emojis
    - Adjust `color` ranges for your color scheme
@@ -61,6 +63,7 @@ We love new themes! Here's how to create one:
    - Test thoroughly!
 
 5. **Test your theme:**
+
    ```bash
    chmod +x themes/matrix-yourtheme.sh
    ./themes/matrix-yourtheme.sh --init
@@ -94,6 +97,7 @@ We love new themes! Here's how to create one:
 - Include error handling where appropriate
 
 **Good Example:**
+
 ```bash
 rain() {
     # Generate random column position for this rain stream
@@ -120,7 +124,8 @@ rain() {
 - Reference issues and pull requests liberally after the first line
 
 **Examples:**
-```
+
+```text
 Add Valentine's Day theme
 
 - Implement pink/red color scheme
@@ -146,7 +151,7 @@ When creating themes, use 256-color ANSI codes for consistency:
 # Pinks: 161-168, 197-205, 213-218
 ```
 
-View the full chart: https://www.ditig.com/256-colors-cheat-sheet
+View the full chart: <https://www.ditig.com/256-colors-cheat-sheet>
 
 ## Theme Submission Checklist
 
@@ -174,6 +179,7 @@ Before submitting a new theme, make sure:
 Looking for inspiration? Here are some theme ideas:
 
 **Holidays & Seasons:**
+
 - 💝 Valentine's Day (pink/red hearts)
 - 🍀 St. Patrick's Day (green clovers)
 - 🎆 New Year's (gold/silver fireworks)
@@ -181,6 +187,7 @@ Looking for inspiration? Here are some theme ideas:
 - 🏳️‍🌈 Pride (rainbow gradient)
 
 **Nature:**
+
 - 🌊 Ocean (blue/teal waves)
 - 🔥 Fire (red/orange flames)
 - 🌙 Night Sky (purple/blue stars)
@@ -188,6 +195,7 @@ Looking for inspiration? Here are some theme ideas:
 - 🍂 Autumn (orange/brown leaves)
 
 **Tech & Culture:**
+
 - 🤖 Robot/AI (silver/blue)
 - 🎮 Retro Gaming (pixel art)
 - 🌈 Vaporwave (pink/cyan aesthetic)
@@ -195,6 +203,7 @@ Looking for inspiration? Here are some theme ideas:
 - 🎸 Rock/Metal (dark with red accents)
 
 **Other:**
+
 - 🏴‍☠️ Pirate (black/gold)
 - 🧛 Vampire (red/black)
 - 🦄 Unicorn (pastel rainbow)
@@ -213,12 +222,14 @@ Test your theme on:
 ## Questions?
 
 Feel free to open an issue with the label "question" or contact:
-- Email: rodericklrenwick@gmail.com
+
+- Email: <rodericklrenwick@gmail.com>
 - GitHub: [@RLR-GitHub](https://github.com/RLR-GitHub)
 
 ## Recognition
 
 Contributors will be acknowledged in:
+
 - README.md Contributors section
 - CHANGELOG.md for each release
 - The theme file itself (as author)

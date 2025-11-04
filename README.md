@@ -18,7 +18,7 @@
 
 <div align="center">
 
-```
+```text
   >
 
   ######     ######    ######   #    #      
@@ -197,6 +197,7 @@ sudo snap install rory-terminal
 # Option 4: Script install
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
+
 </details>
 
 <details>
@@ -215,6 +216,7 @@ brew install rory-terminal
 # Option 4: Script install
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
+
 </details>
 
 <details>
@@ -233,11 +235,13 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 # Option 4: Download MSI
 # Visit: https://github.com/RLR-GitHub/terminal-themes/releases
 ```
+
 </details>
 
 ### 📱 Desktop Integration
 
 All installation methods provide:
+
 - **Desktop shortcuts** - Launch from your applications menu
 - **Terminal commands** - Run `rory-terminal` from anywhere
 - **Shell integration** - Automatic theme loading
@@ -248,11 +252,13 @@ All installation methods provide:
 ## 📋 Requirements
 
 ### Minimum Requirements
+
 - **Windows:** Windows 10+ with PowerShell 5.1+
 - **macOS:** macOS 10.14+ with bash 4.0+
 - **Linux:** Any modern distribution with bash 4.0+
 
 ### Recommended Setup
+
 - **Windows Terminal** (Windows) or **iTerm2** (macOS) or **GNOME Terminal** (Linux)
 - **Starship prompt** (auto-installed)
 - **256-color support** and **UTF-8 encoding**
@@ -265,19 +271,21 @@ All installation methods provide:
 ### One-Line Install
 
 **Unix/Linux/macOS:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
 **Windows PowerShell:**
+
 ```powershell
 iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
 ```
 
 ### GUI Application
 
-- **Windows:** Download from [Microsoft Store](#) or use the MSI installer
-- **macOS:** Download from [Mac App Store](#) or use `brew install --cask rory-terminal`
+- **Windows:** Download from Microsoft Store (coming soon) or use the MSI installer
+- **macOS:** Download from Mac App Store (coming soon) or use `brew install --cask rory-terminal`
 - **Linux:** Install via your package manager or download the AppImage
 
 ---
@@ -388,6 +396,7 @@ ll
 ## 🎨 Theme Details
 
 ### 🎃 Halloween Theme
+
 ```bash
 Colors: Orange shades (#ff6b00 range)
 Symbols: 🎃👻💀🦇🕷️🕸️ + numbers
@@ -396,6 +405,7 @@ Vibe: Spooky and mysterious
 ```
 
 ### 🎄 Christmas Theme
+
 ```bash
 Colors: Alternating red/green (#ff0000, #00ff00)
 Symbols: 🎄⛄🎅🎁❄️⭐🔔 + numbers
@@ -404,6 +414,7 @@ Vibe: Festive and jolly
 ```
 
 ### 🐰 Easter Theme
+
 ```bash
 Colors: Pastel pink/cyan/green (#ff69b4, #87ceeb, #98fb98)
 Symbols: 🐰🥚🐣🌷🌸🦋🌼 + numbers
@@ -412,6 +423,7 @@ Vibe: Bright and cheerful
 ```
 
 ### 💻 Hacker Theme
+
 ```bash
 Colors: Bright green (#00ff00 range)
 Symbols: r0ry.computer branding + katakana
@@ -420,6 +432,7 @@ Vibe: Cyberpunk and elite
 ```
 
 ### 🟢 Matrix Theme
+
 ```bash
 Colors: Classic Matrix green (#0f0 range)
 Symbols: Numbers + Japanese katakana characters
@@ -485,6 +498,7 @@ Change the `RANDOM %` values to adjust alert probability:
 Try it live in your browser: [https://rlr-github.github.io/terminal-themes](https://rlr-github.github.io/terminal-themes)
 
 The demo features:
+
 - ✨ Live Matrix rain animations for each theme
 - 📋 Platform-specific installation commands
 - 🎨 Responsive design with theme-specific styling
@@ -498,6 +512,7 @@ The demo features:
 ### Issue: Emojis don't display correctly
 
 **Solution:** Ensure your terminal supports UTF-8 encoding:
+
 ```bash
 # Check current locale
 locale
@@ -510,6 +525,7 @@ export LANG=en_US.UTF-8
 ### Issue: Colors look wrong
 
 **Solution:** Verify 256-color support:
+
 ```bash
 # Test color support
 echo $TERM
@@ -522,6 +538,7 @@ export TERM=xterm-256color
 ### Issue: Script doesn't stop with Ctrl+C
 
 **Solution:** The `trap` command should handle this. If not working:
+
 ```bash
 # Force kill the script
 pkill -f matrix.sh
@@ -533,6 +550,7 @@ killall matrix.sh
 ### Issue: Animation is too fast/slow
 
 **Solution:** Adjust the `sleep` values in your script:
+
 ```bash
 # Find these lines and modify the numbers
 sleep 0.05  # Make this larger to slow down
@@ -542,6 +560,7 @@ sleep 0.1   # Or smaller to speed up
 ### Issue: Script runs but terminal is garbled after exit
 
 **Solution:** The cleanup function should restore the terminal. If not:
+
 ```bash
 # Manually reset terminal
 reset
@@ -554,7 +573,7 @@ stty sane
 
 ## 📁 Repository Structure
 
-```
+```text
 terminal-themes/
 ├── README.md                          # This file
 ├── LICENSE                            # MIT License
@@ -589,6 +608,7 @@ Contributions are welcome! Here's how you can help:
 5. **Open** a Pull Request
 
 ### Ideas for New Themes:
+
 - 💝 Valentine's Day (pink/red hearts)
 - 🎆 New Year's (gold/silver fireworks)
 - 🍀 St. Patrick's Day (green clovers)
@@ -604,7 +624,7 @@ Contributions are welcome! Here's how you can help:
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-```
+```text
 MIT License
 
 Copyright (c) 2024 Roderick Lawrence Renwick
@@ -636,7 +656,7 @@ SOFTWARE.
 
 - 🌐 Website: [r0ry.com](https://r0ry.com) | [rlr.dev](https://rlr.dev)
 - 💼 GitHub: [@RLR-GitHub](https://github.com/RLR-GitHub)
-- 📧 Email: rodericklrenwick@gmail.com
+- 📧 Email: <rodericklrenwick@gmail.com>
 - 🎓 MSECE @ Purdue University
 - 🔬 Interests: Computer Vision & Machine Learning
 
@@ -697,6 +717,6 @@ If you found this project helpful, please consider:
 
 *Transform your terminal. Elevate your coding experience.*
 
-[⬆ Back to Top](#-rorys-terminal-theme-collection)
+[⬆ Back to Top](#-rory-terminal---universal-terminal-theming-platform)
 
 </div>

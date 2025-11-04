@@ -10,6 +10,7 @@ curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/ins
 ```
 
 This interactive installer will:
+
 1. ✓ Check your system
 2. ✓ Let you choose a theme
 3. ✓ Download the script
@@ -44,11 +45,13 @@ curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes
 ### 2. Add to your shell
 
 **For Bash:**
+
 ```bash
 echo '~/matrix.sh --init' >> ~/.bashrc
 ```
 
 **For Zsh:**
+
 ```bash
 echo '~/matrix.sh --init' >> ~/.zshrc
 ```
@@ -152,6 +155,7 @@ nano ~/.bashrc  # or ~/.zshrc
 ```
 
 Or use the installer's uninstall:
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/install.sh | bash -s -- --uninstall
 ```
@@ -161,6 +165,7 @@ curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/ins
 ## 🆘 Troubleshooting
 
 ### Emojis look weird?
+
 ```bash
 # Add to ~/.bashrc
 export LC_ALL=en_US.UTF-8
@@ -168,12 +173,14 @@ export LANG=en_US.UTF-8
 ```
 
 ### Colors don't work?
+
 ```bash
 # Add to ~/.bashrc
 export TERM=xterm-256color
 ```
 
 ### Script won't stop?
+
 ```bash
 # Press Ctrl+C
 # Or force kill:
@@ -181,6 +188,7 @@ pkill -f matrix.sh
 ```
 
 ### Terminal is broken after exit?
+
 ```bash
 reset
 ```
@@ -190,6 +198,7 @@ reset
 ## 📚 Full Documentation
 
 For detailed customization, theme creation, and more:
+
 - [Full README](README.md)
 - [Contributing Guide](CONTRIBUTING.md)
 - [GitHub Repository](https://github.com/RLR-GitHub/terminal-themes)
@@ -200,7 +209,7 @@ For detailed customization, theme creation, and more:
 
 - 🐛 [Report Issues](https://github.com/RLR-GitHub/terminal-themes/issues)
 - 💡 [Request Features](https://github.com/RLR-GitHub/terminal-themes/issues/new)
-- 📧 Email: rodericklrenwick@gmail.com
+- 📧 Email: <rodericklrenwick@gmail.com>
 
 ---
 

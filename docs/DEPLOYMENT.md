@@ -3,6 +3,7 @@
 This guide provides comprehensive deployment instructions for Rory Terminal Themes across macOS, Linux (including Ubuntu), and Windows.
 
 ## Table of Contents
+
 1. [Quick Install](#quick-install)
 2. [Platform-Specific Instructions](#platform-specific-instructions)
 3. [Troubleshooting Common Issues](#troubleshooting-common-issues)
@@ -16,16 +17,19 @@ This guide provides comprehensive deployment instructions for Rory Terminal Them
 ### 🌐 Universal One-Liner (Recommended)
 
 **macOS/Linux:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
 **Windows PowerShell:**
+
 ```powershell
 iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
 ```
 
 **Windows CMD:**
+
 ```cmd
 powershell -Command "iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex"
 ```
@@ -36,7 +40,8 @@ powershell -Command "iwr -useb https://raw.githubusercontent.com/RLR-GitHub/term
 
 ### 🐧 Ubuntu/Debian Linux
 
-#### Prerequisites
+#### Linux Prerequisites
+
 ```bash
 # Update package list
 sudo apt update
@@ -48,14 +53,16 @@ sudo apt install -y curl git bash
 bash --version
 ```
 
-#### Installation Methods
+#### Linux Installation Methods
 
 **Method 1: Automated Script (Recommended)**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
 **Method 2: Package Manager**
+
 ```bash
 # Add PPA (when available)
 sudo add-apt-repository ppa:rlr-github/terminal-themes
@@ -69,13 +76,15 @@ sudo apt-get install -f  # Fix any dependency issues
 ```
 
 **Method 3: Snap**
+
 ```bash
 sudo snap install rory-terminal
 ```
 
 ### 🍎 macOS
 
-#### Prerequisites
+#### macOS Prerequisites
+
 ```bash
 # Install Xcode Command Line Tools (if needed)
 xcode-select --install
@@ -84,9 +93,10 @@ xcode-select --install
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
 
-#### Installation Methods
+#### macOS Installation Methods
 
 **Method 1: Homebrew (Recommended)**
+
 ```bash
 # Tap the repository
 brew tap rlr-github/terminal-themes
@@ -99,11 +109,13 @@ brew install --cask rory-terminal
 ```
 
 **Method 2: Automated Script**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
 **Method 3: Native Package**
+
 ```bash
 # Download and install .pkg
 curl -LO https://github.com/RLR-GitHub/terminal-themes/releases/latest/download/rory-terminal-3.0.0.pkg
@@ -112,18 +124,21 @@ sudo installer -pkg rory-terminal-3.0.0.pkg -target /
 
 ### 🪟 Windows
 
-#### Prerequisites
+#### Windows Prerequisites
+
 - Windows 10/11 with PowerShell 5.1 or higher
 - Windows Terminal (recommended)
 
-#### Installation Methods
+#### Windows Installation Methods
 
 **Method 1: Winget (Windows 11/10)**
+
 ```powershell
 winget install RoryTerminal
 ```
 
 **Method 2: Chocolatey**
+
 ```powershell
 # Install Chocolatey first if needed
 Set-ExecutionPolicy Bypass -Scope Process -Force
@@ -135,6 +150,7 @@ choco install rory-terminal
 ```
 
 **Method 3: Scoop**
+
 ```powershell
 # Install Scoop first if needed
 iwr -useb get.scoop.sh | iex
@@ -145,6 +161,7 @@ scoop install rory-terminal
 ```
 
 **Method 4: PowerShell Script**
+
 ```powershell
 # Run installation script
 iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1 | iex
@@ -163,24 +180,28 @@ iwr -useb https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/inst
 **Solutions:**
 
 1. **Ensure bash is installed:**
+
 ```bash
 sudo apt install bash
 ```
 
-2. **Run with explicit bash:**
+1. **Run with explicit bash:**
+
 ```bash
 bash ~/matrix.sh
 # or
 bash ~/.local/bin/matrix
 ```
 
-3. **Make script executable and run directly:**
+1. **Make script executable and run directly:**
+
 ```bash
 chmod +x ~/matrix.sh
 ./matrix.sh  # Uses shebang line
 ```
 
-4. **Re-run installer** (it now includes compatibility fixes):
+1. **Re-run installer** (it now includes compatibility fixes):
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
@@ -190,6 +211,7 @@ curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/ins
 **Issue:** Script permissions error
 
 **Solution:**
+
 ```bash
 # Fix permissions
 chmod +x ~/.local/bin/matrix
@@ -202,6 +224,7 @@ echo $PATH | grep -q "$HOME/.local/bin" || export PATH="$HOME/.local/bin:$PATH"
 **Issue:** Colors not displaying correctly
 
 **Solution:**
+
 ```bash
 # Check terminal color support
 echo $TERM
@@ -218,6 +241,7 @@ echo 'export TERM=xterm-256color' >> ~/.bashrc
 **Issue:** "zsh: command not found: matrix"
 
 **Solution:**
+
 ```bash
 # Add to ~/.zshrc
 echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
@@ -227,6 +251,7 @@ source ~/.zshrc
 **Issue:** Homebrew installation fails
 
 **Solution:**
+
 ```bash
 # Update Homebrew
 brew update
@@ -246,6 +271,7 @@ brew install rory-terminal
 **Issue:** "Running scripts is disabled on this system"
 
 **Solution:**
+
 ```powershell
 # Run as Administrator
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -257,6 +283,7 @@ Set-ExecutionPolicy Bypass -Scope Process
 **Issue:** Unicode characters not displaying
 
 **Solution:**
+
 ```powershell
 # Enable UTF-8 in Windows Terminal
 # Settings > Profiles > Defaults > Advanced > Text encoding: UTF-8
@@ -286,26 +313,30 @@ $theme = "hacker"
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/powershell/matrix-$theme.ps1" -OutFile "$HOME\matrix.ps1"
 ```
 
-2. **Make executable (macOS/Linux):**
+1. **Make executable (macOS/Linux):**
+
 ```bash
 chmod +x ~/matrix.sh
 ```
 
-3. **Create alias:**
+1. **Create alias:**
 
 **Bash/Zsh (macOS/Linux):**
+
 ```bash
 echo 'alias matrix="$HOME/matrix.sh"' >> ~/.bashrc  # or ~/.zshrc
 source ~/.bashrc
 ```
 
 **PowerShell (Windows):**
+
 ```powershell
 Add-Content $PROFILE "function matrix { & `"$HOME\matrix.ps1`" @args }"
 . $PROFILE
 ```
 
-4. **Run:**
+1. **Run:**
+
 ```bash
 matrix          # Full animation
 matrix --init   # 5-second intro
@@ -326,26 +357,30 @@ matrix --init   # 5-second intro
 ### 🔒 Security Considerations
 
 1. **Verify script sources:**
+
 ```bash
 # Check script content before execution
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | less
 ```
 
-2. **Use checksums when available:**
+1. **Use checksums when available:**
+
 ```bash
 # Verify package integrity
 sha256sum rory-terminal_3.0.0_amd64.deb
 ```
 
-3. **Install from official sources:**
-- GitHub Releases: https://github.com/RLR-GitHub/terminal-themes/releases
-- Official Website: https://rory.computer/terminal-themes
+1. **Install from official sources:**
+
+- GitHub Releases: <https://github.com/RLR-GitHub/terminal-themes/releases>
+- Official Website: <https://rory.computer/terminal-themes>
 
 ### 🚀 Automated Deployment
 
 **For System Administrators:**
 
 1. **Mass deployment script (Linux):**
+
 ```bash
 #!/bin/bash
 # deploy-rory-terminal.sh
@@ -359,14 +394,16 @@ while IFS= read -r host; do
 done < "$HOSTS_FILE"
 ```
 
-2. **Group Policy deployment (Windows):**
+1. **Group Policy deployment (Windows):**
+
 ```powershell
 # Deploy via GPO PowerShell startup script
 $installScript = "https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.ps1"
 Invoke-Expression (New-Object Net.WebClient).DownloadString($installScript)
 ```
 
-3. **Configuration management integration:**
+1. **Configuration management integration:**
+
 ```yaml
 # Ansible playbook example
 ---
@@ -382,18 +419,21 @@ Invoke-Expression (New-Object Net.WebClient).DownloadString($installScript)
 ### 📦 Creating Custom Packages
 
 **Debian/Ubuntu (.deb):**
+
 ```bash
 # Use the provided build script
 ./installers/native/linux/build-deb.sh
 ```
 
 **macOS (.pkg):**
+
 ```bash
 # Use the provided build script
 ./installers/native/macos/build-pkg.sh
 ```
 
 **Windows (.msi):**
+
 ```powershell
 # Use the provided build script
 .\installers\native\windows\build-msi.ps1
@@ -414,7 +454,7 @@ If you encounter issues not covered here:
 
 1. Check [GitHub Issues](https://github.com/RLR-GitHub/terminal-themes/issues)
 2. Review [FAQ](https://github.com/RLR-GitHub/terminal-themes/wiki/FAQ)
-3. Contact: rodericklrenwick@gmail.com
+3. Contact: <rodericklrenwick@gmail.com>
 
 ---
 

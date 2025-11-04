@@ -3,6 +3,7 @@
 ## Before → After
 
 ### Original State (from tmp/)
+
 - Simple bash-only Matrix animations
 - Single README.md
 - Manual installation only
@@ -10,6 +11,7 @@
 - 1 installation method
 
 ### Current State (Refactored)
+
 - **Universal cross-platform system**
 - **3 operating systems:** Windows, macOS, Linux
 - **6+ shells:** bash, zsh, fish, PowerShell 5.1+, PowerShell 7+, CMD
@@ -32,33 +34,38 @@
 ## File Breakdown
 
 ### Core Modules (8 files)
+
 - Option #1: Starship (4 files)
 - Option #2: PTY Shim (4 files + Makefile + README)
 
 ### Themes (20 files)
+
 - 5 Bash scripts
 - 5 PowerShell scripts
 - 5 Starship configs
 - 5 theme metadata entries
 
 ### Installers (12+ files)
+
 - 3 main installers (Unix, Windows PowerShell, Windows CMD)
 - 9 native package builders (3 per platform)
 
 ### Documentation (8 files)
+
 - Architecture guide
 - 3 platform guides (Windows, macOS, Linux)
 - QuickStart, Contributing, Changelog
 - Repository structure
 
 ### Configuration (4 files)
+
 - Theme registry (themes.json)
 - Default config (default.json)
 - Universal aliases (2 files)
 
 ## Repository Stats
 
-```
+```text
 Total Lines of Code: ~15,000+
 Total Files: 45+
 Total Directories: 27
