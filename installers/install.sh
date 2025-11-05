@@ -548,12 +548,196 @@ print_completion() {
     echo ""
 }
 
+# Show help
+show_help() {
+    cat << EOF
+Rory Terminal Themes Installer v${VERSION}
+
+Usage:
+  curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+  curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- [OPTIONS]
+
+Options:
+  --option <type>       Installation option: starship, pty-shim, matrix-only
+                        (default: starship)
+
+  --theme <name>        Theme selection: ascii, hacker, matrix, halloween, christmas, easter
+                        (default: ascii)
+
+  --quiet               Suppress banner and non-essential output
+
+  --help                Show this help message
+
+Examples:
+  # Interactive mode (default)
+  curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+
+  # Non-interactive with ASCII theme and Starship
+  curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii
+
+  # Quick matrix-only install
+  curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option matrix-only --theme hacker --quiet
+
+  # Help
+  curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --help
+
+Theme Options:
+  ascii       - Cyberpunk purple/cyan (default)
+  hacker      - Bright green cyber
+  matrix      - Classic green
+  halloween   - Spooky orange/black
+  christmas   - Festive red/green
+  easter      - Pastel rainbow
+
+Installation Options:
+  starship    - Starship prompt + modern tools (recommended)
+  pty-shim    - Advanced PTY wrapper with color injection
+  matrix-only - Just Matrix animations (lightweight)
+
+Documentation:
+  https://github.com/RLR-GitHub/terminal-themes
+
+EOF
+    exit 0
+}
+
 # Main installation flow
 main() {
-    print_banner
+    # Parse command-line arguments
+    local skip_interactive=false
+    local quiet_mode=false
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --option)
+                if [[ -n "$2" ]]; then
+                    case "$2" in
+                        starship|pty-shim|matrix-only)
+                            INSTALL_OPTION="$2"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        1)
+                            INSTALL_OPTION="starship"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        2)
+                            INSTALL_OPTION="pty-shim"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        3)
+                            INSTALL_OPTION="matrix-only"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        *)
+                            print_error "Invalid option: $2"
+                            print_info "Valid options: starship, pty-shim, matrix-only (or 1, 2, 3)"
+                            exit 1
+                            ;;
+                    esac
+                else
+                    print_error "--option requires an argument"
+                    exit 1
+                fi
+                ;;
+            --theme)
+                if [[ -n "$2" ]]; then
+                    case "$2" in
+                        ascii|hacker|matrix|halloween|christmas|easter)
+                            THEME="$2"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        1)
+                            THEME="ascii"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        2)
+                            THEME="hacker"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        3)
+                            THEME="matrix"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        4)
+                            THEME="halloween"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        5)
+                            THEME="christmas"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        6)
+                            THEME="easter"
+                            skip_interactive=true
+                            shift 2
+                            ;;
+                        *)
+                            print_error "Invalid theme: $2"
+                            print_info "Valid themes: ascii, hacker, matrix, halloween, christmas, easter (or 1-6)"
+                            exit 1
+                            ;;
+                    esac
+                else
+                    print_error "--theme requires an argument"
+                    exit 1
+                fi
+                ;;
+            --quiet)
+                quiet_mode=true
+                shift
+                ;;
+            --help|-h)
+                show_help
+                ;;
+            *)
+                print_warning "Unknown option: $1"
+                shift
+                ;;
+        esac
+    done
+
+    # Set defaults if not provided
+    INSTALL_OPTION="${INSTALL_OPTION:-starship}"
+    THEME="${THEME:-ascii}"
+
+    # Show banner unless quiet mode
+    if [[ "$quiet_mode" != true ]]; then
+        print_banner
+    fi
+
     check_requirements
-    select_option
-    select_theme
+
+    # Interactive prompts only if no command-line args were provided
+    if [[ "$skip_interactive" != true ]]; then
+        select_option
+        select_theme
+    else
+        # Set theme name for completion message
+        case "$THEME" in
+            ascii) THEME_NAME="ASCII" ;;
+            hacker) THEME_NAME="Hacker" ;;
+            matrix) THEME_NAME="Matrix" ;;
+            halloween) THEME_NAME="Halloween" ;;
+            christmas) THEME_NAME="Christmas" ;;
+            easter) THEME_NAME="Easter" ;;
+        esac
+
+        if [[ "$quiet_mode" != true ]]; then
+            print_success "Installation option: $INSTALL_OPTION"
+            print_success "Theme: $THEME_NAME"
+        fi
+    fi
+
     create_directories
     
     case "$INSTALL_OPTION" in

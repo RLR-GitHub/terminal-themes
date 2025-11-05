@@ -4,18 +4,54 @@ Get your terminal themed in under 60 seconds!
 
 ## 🚀 Super Quick Install
 
+### Interactive Mode (Recommended for First-Time Users)
+
 ```bash
 # One command to rule them all
-curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
 ```
 
 This interactive installer will:
 
 1. ✓ Check your system
-2. ✓ Let you choose a theme
-3. ✓ Download the script
-4. ✓ Configure your shell
-5. ✓ Run a test
+2. ✓ Let you choose a theme (1-6)
+3. ✓ Let you choose installation option (1-3)
+4. ✓ Download and configure everything
+5. ✓ Set up your shell
+
+### Non-Interactive Mode (For Scripts & Automation)
+
+```bash
+# Default install (ASCII theme + Starship)
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii
+
+# Quick matrix-only install with hacker theme
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option matrix-only --theme hacker
+
+# Silent install (no banner)
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii --quiet
+
+# Show help
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --help
+```
+
+**Available Options:**
+
+- `--option <type>`: Installation type
+  - `starship` (or `1`) - Starship prompt + modern tools (recommended)
+  - `pty-shim` (or `2`) - Advanced PTY wrapper with color injection
+  - `matrix-only` (or `3`) - Just Matrix animations (lightweight)
+
+- `--theme <name>`: Theme selection
+  - `ascii` (or `1`) - Cyberpunk purple/cyan (default)
+  - `hacker` (or `2`) - Bright green cyber
+  - `matrix` (or `3`) - Classic green
+  - `halloween` (or `4`) - Spooky orange/black
+  - `christmas` (or `5`) - Festive red/green
+  - `easter` (or `6`) - Pastel rainbow
+
+- `--quiet`: Suppress banner and non-essential output
+- `--help`: Show help message
 
 ---
 

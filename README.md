@@ -50,15 +50,16 @@ When you run any Rory Terminal theme, you'll see the ASCII "> RORY" banner follo
 
 ## 🎨 Theme Showcase
 
-This repository contains **5 unique terminal themes** featuring Matrix-style digital rain animations with custom color schemes, symbols, and alerts for different occasions:
+This repository contains **6 unique terminal themes** featuring Matrix-style digital rain animations with custom color schemes, symbols, and alerts for different occasions:
 
 | Theme | Preview | Color Scheme | Best For |
 |-------|---------|--------------|----------|
+| 🎨 **ASCII** | Cyberpunk purple/cyan | `#a855f7` `#22d3ee` | Default - Modern cyberpunk aesthetic |
+| 💻 **Hacker** | Bright green cyber | `#00ff00` | r0ry.computer branding |
+| 🟢 **Matrix** | Classic green | `#0f0` | Traditional Matrix look |
 | 🎃 **Halloween** | Spooky orange/black | `#ff6b00` | October vibes |
 | 🎄 **Christmas** | Festive red/green | `#ff0000` `#00ff00` | Holiday season |
 | 🐰 **Easter** | Pastel rainbow | `#ff69b4` `#87ceeb` `#98fb98` | Spring celebrations |
-| 💻 **Hacker** | Bright green cyber | `#00ff00` | r0ry.computer branding |
-| 🟢 **Matrix** | Classic green | `#0f0` | Traditional Matrix look |
 
 ---
 
@@ -194,8 +195,11 @@ sudo dpkg -i rory-terminal_3.0.0_amd64.deb
 # Option 3: Snap
 sudo snap install rory-terminal
 
-# Option 4: Script install
+# Option 4: Script install (interactive)
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+
+# Option 5: Script install (non-interactive, perfect for automation)
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii
 ```
 
 </details>
@@ -213,8 +217,11 @@ brew install rory-terminal
 # Option 3: Download DMG
 # Visit: https://github.com/RLR-GitHub/terminal-themes/releases
 
-# Option 4: Script install
+# Option 4: Script install (interactive)
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+
+# Option 5: Script install (non-interactive, perfect for automation)
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii
 ```
 
 </details>

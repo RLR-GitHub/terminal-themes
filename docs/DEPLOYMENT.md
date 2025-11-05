@@ -16,10 +16,26 @@ This guide provides comprehensive deployment instructions for Rory Terminal Them
 
 ### 🌐 Universal One-Liner (Recommended)
 
-**macOS/Linux:**
+**macOS/Linux (Interactive):**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+```
+
+**macOS/Linux (Non-Interactive):**
+
+```bash
+# Default install (ASCII theme + Starship)
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii
+
+# Quick matrix-only install
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option matrix-only --theme hacker
+
+# Silent install for CI/CD
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option starship --theme ascii --quiet
+
+# Show all options
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --help
 ```
 
 **Windows PowerShell:**
@@ -386,12 +402,30 @@ sha256sum rory-terminal_3.0.0_amd64.deb
 # deploy-rory-terminal.sh
 
 HOSTS_FILE="hosts.txt"
-THEME="${1:-ascii}"  # Defaults to ascii theme
+OPTION="${1:-starship}"  # Defaults to starship
+THEME="${2:-ascii}"      # Defaults to ascii theme
 
 while IFS= read -r host; do
     echo "Deploying to $host..."
-    ssh "$host" 'curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --theme '"$THEME"' --quiet'
+    ssh "$host" "curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash -s -- --option $OPTION --theme $THEME --quiet"
 done < "$HOSTS_FILE"
+
+# Usage:
+# ./deploy-rory-terminal.sh starship ascii    # Deploy starship with ASCII theme
+# ./deploy-rory-terminal.sh matrix-only hacker # Deploy matrix-only with hacker theme
+```
+
+1. **CI/CD Pipeline Integration:**
+
+```bash
+# GitHub Actions / GitLab CI / Jenkins
+# Non-interactive install perfect for automated pipelines
+
+# .github/workflows/setup-terminal.yml
+- name: Install Rory Terminal Themes
+  run: |
+    curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | \
+      bash -s -- --option starship --theme ascii --quiet
 ```
 
 1. **Group Policy deployment (Windows):**
@@ -410,10 +444,33 @@ Invoke-Expression (New-Object Net.WebClient).DownloadString($installScript)
 - name: Install Rory Terminal Themes
   hosts: all
   tasks:
-    - name: Download and run installer
-      shell: curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+    - name: Download and run installer (non-interactive)
+      shell: |
+        curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | \
+          bash -s -- --option starship --theme ascii --quiet
       args:
-        creates: /home/{{ ansible_user }}/.local/bin/matrix
+        creates: /home/{{ ansible_user }}/.local/bin/theme-manager
+
+    - name: Verify installation
+      command: theme-manager current
+      register: theme_output
+      changed_when: false
+
+    - name: Show installed theme
+      debug:
+        msg: "Installed theme: {{ theme_output.stdout }}"
+```
+
+```yaml
+# Docker deployment example
+# Dockerfile
+FROM ubuntu:22.04
+
+RUN apt-get update && apt-get install -y curl bash && \
+    curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | \
+      bash -s -- --option matrix-only --theme hacker --quiet
+
+CMD ["/bin/bash"]
 ```
 
 ### 📦 Creating Custom Packages
