@@ -64,7 +64,7 @@ EOF
 
 cat > "${DEB_ROOT}/usr/local/bin/rory-matrix" << 'EOF'
 #!/bin/bash
-exec /opt/rory-terminal/themes/bash/matrix-hacker.sh "$@"
+exec /opt/rory-terminal/themes/bash/matrix-ascii.sh "$@"
 EOF
 
 chmod +x "${DEB_ROOT}/usr/local/bin/"*
@@ -90,7 +90,8 @@ Description: Cyberpunk terminal themes collection
  and modern terminal customization with Starship integration.
  .
  Features include:
-  - 5 unique themes (Halloween, Christmas, Easter, Hacker, Matrix)
+  - 6 unique themes (ASCII, Hacker, Matrix, Halloween, Christmas, Easter)
+  - Cyberpunk purple-cyan gradient ASCII art (default)
   - Cross-platform compatibility
   - Starship prompt integration
   - Modern terminal tools support

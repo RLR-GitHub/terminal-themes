@@ -27,6 +27,10 @@ display_banner() {
             local color1="\e[38;5;46m"   # Green
             local color2="\e[38;5;40m"   # Darker green
             ;;
+        ascii)
+            local color1="\e[38;5;141m"  # Purple
+            local color2="\e[38;5;51m"   # Cyan
+            ;;
         *)
             local color1="\e[38;5;201m"  # Magenta/Pink
             local color2="\e[38;5;51m"   # Cyan

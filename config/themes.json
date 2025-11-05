@@ -90,6 +90,24 @@
       "alerts": ["BREACH DETECTED", "NODE COMPROMISED", "SYSTEM ALERT", "HACK IN PROGRESS", "FIREWALL BREACHED", "INTRUSION DETECTED", "CODE RED", "ACCESS DENIED"],
       "season": "all",
       "mood": "classic"
+    },
+    "ascii": {
+      "name": "ASCII",
+      "icon": "🎨",
+      "description": "Cyberpunk terminal with blocky ASCII art and interactive commands",
+      "colors": {
+        "primary": "#a855f7",
+        "secondary": "#22d3ee",
+        "accent": "#ec4899",
+        "background": "#14082880",
+        "foreground": "#a855f7",
+        "error": "#ef4444",
+        "success": "#22c55e"
+      },
+      "symbols": "r0ry.computer>▶◀█▓▒░#@%&*0123456789!()_+[]{}|;:<>?ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ",
+      "alerts": ["SYSTEM READY", "COMMAND PROCESSED", "ACCESS GRANTED", "HACK COMPLETE", "SCAN FINISHED", "STATUS UPDATE", "BANNER LOADED", "THEME CHANGED"],
+      "season": "all",
+      "mood": "cyberpunk"
     }
   },
   "platforms": {

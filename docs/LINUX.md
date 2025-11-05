@@ -235,11 +235,12 @@ theme-manager list
 ### Change Theme
 
 ```bash
-theme-manager set hacker
-theme-manager set matrix
-theme-manager set halloween
-theme-manager set christmas
-theme-manager set easter
+theme-manager set ascii       # Default - Cyberpunk purple/cyan
+theme-manager set hacker      # Bright green with r0ry.computer
+theme-manager set matrix      # Classic green
+theme-manager set halloween   # Spooky orange
+theme-manager set christmas   # Festive red/green
+theme-manager set easter      # Pastel rainbow
 ```
 
 ### Current Theme

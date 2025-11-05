@@ -91,7 +91,7 @@ EOF
 
 cat > "${APPDIR}/usr/bin/rory-matrix" << 'EOF'
 #!/bin/bash
-exec "${RORY_TERMINAL_DIR}/themes/bash/matrix-hacker.sh" "$@"
+exec "${RORY_TERMINAL_DIR}/themes/bash/matrix-ascii.sh" "$@"
 EOF
 
 chmod +x "${APPDIR}/usr/bin/"*

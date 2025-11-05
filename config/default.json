@@ -1,6 +1,6 @@
 {
   "version": "3.0.0",
-  "default_theme": "hacker",
+  "default_theme": "ascii",
   "default_option": "starship",
   "auto_update": false,
   "telemetry": false,

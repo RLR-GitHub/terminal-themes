@@ -26,20 +26,23 @@ This interactive installer will:
 Pick your favorite:
 
 ```bash
-# 🎃 Halloween
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-halloween.sh && chmod +x ~/matrix.sh
+# 🎨 ASCII (Default - Cyberpunk purple/cyan)
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-ascii.sh && chmod +x ~/matrix.sh
 
-# 🎄 Christmas  
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-christmas.sh && chmod +x ~/matrix.sh
+# 💻 Hacker (Bright green with r0ry.computer)
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-hacker.sh && chmod +x ~/matrix.sh
 
-# 🐰 Easter
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-easter.sh && chmod +x ~/matrix.sh
+# 🟢 Matrix (Classic green)
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-classic.sh && chmod +x ~/matrix.sh
 
-# 💻 Hacker
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-hacker.sh && chmod +x ~/matrix.sh
+# 🎃 Halloween (Spooky orange)
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-halloween.sh && chmod +x ~/matrix.sh
 
-# 🟢 Matrix
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-classic.sh && chmod +x ~/matrix.sh
+# 🎄 Christmas (Festive red/green)
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-christmas.sh && chmod +x ~/matrix.sh
+
+# 🐰 Easter (Pastel rainbow)
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-easter.sh && chmod +x ~/matrix.sh
 ```
 
 ### 2. Add to your shell
@@ -134,7 +137,7 @@ ll          # Better file listing
 
 ```bash
 # Download a different theme (overwrites current)
-curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/matrix-easter.sh
+curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-easter.sh
 chmod +x ~/matrix.sh
 
 # Start new terminal or run:
@@ -159,6 +162,52 @@ Or use the installer's uninstall:
 ```bash
 curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/install.sh | bash -s -- --uninstall
 ```
+
+---
+
+## 🐧 Ubuntu-Specific Tips
+
+### GNOME Terminal Setup (Default Ubuntu Terminal)
+
+```bash
+# Enable 256 colors in GNOME Terminal
+# Edit → Preferences → Profiles → Colors
+# Set "Built-in schemes" to "Custom"
+# Enable "Use colors from system theme" = OFF
+```
+
+### Ubuntu Uses dash, Not bash by Default
+
+Ubuntu's `/bin/sh` is `dash`, which doesn't support bash features. If you get errors:
+
+```bash
+# Check your current shell
+echo $SHELL
+
+# If it's not bash, switch to bash:
+chsh -s /bin/bash
+
+# Or always run scripts with explicit bash:
+bash ~/matrix.sh
+```
+
+### WSL Ubuntu (Windows Subsystem for Linux)
+
+```bash
+# Works perfectly on WSL Ubuntu!
+# 1. Install Windows Terminal from Microsoft Store first
+# 2. Run the installer normally:
+curl -fsSL https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/installers/install.sh | bash
+
+# 3. Restart your WSL terminal
+```
+
+### Ubuntu LTS Version Support
+
+- ✅ **24.04 LTS (Noble)**: Fully supported, all features
+- ✅ **22.04 LTS (Jammy)**: Fully supported, all features
+- ✅ **20.04 LTS (Focal)**: Fully supported (Bash 5.0+)
+- ⚠️ **18.04 LTS (Bionic)**: Basic support, use manual install
 
 ---
 

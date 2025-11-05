@@ -303,14 +303,14 @@ $OutputEncoding = [System.Text.Encoding]::UTF8
 
 ```bash
 # Choose your theme
-THEME="hacker"  # Options: halloween, christmas, easter, hacker, matrix
+THEME="ascii"  # Options: ascii (default), hacker, matrix, halloween, christmas, easter
 
 # Download (macOS/Linux)
 curl -o ~/matrix.sh https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/bash/matrix-${THEME}.sh
 
 # Download (Windows PowerShell)
-$theme = "hacker"
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/powershell/matrix-$theme.ps1" -OutFile "$HOME\matrix.ps1"
+$theme = "ascii"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/RLR-GitHub/terminal-themes/main/themes/powershell/Matrix-${theme}.ps1" -OutFile "$HOME\matrix.ps1"
 ```
 
 1. **Make executable (macOS/Linux):**
@@ -386,7 +386,7 @@ sha256sum rory-terminal_3.0.0_amd64.deb
 # deploy-rory-terminal.sh
 
 HOSTS_FILE="hosts.txt"
-THEME="${1:-hacker}"
+THEME="${1:-ascii}"  # Defaults to ascii theme
 
 while IFS= read -r host; do
     echo "Deploying to $host..."

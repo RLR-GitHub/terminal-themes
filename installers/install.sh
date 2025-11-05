@@ -269,23 +269,25 @@ select_theme() {
     echo -e "${MAGENTA}║             Choose Your Theme                 ║${NC}"
     echo -e "${MAGENTA}╚══════════════════════════════════════════════╝${NC}"
     echo ""
-    echo -e "  ${YELLOW}1)${NC} 🎃 ${YELLOW}Halloween${NC}    - Spooky orange/black"
-    echo -e "  ${YELLOW}2)${NC} 🎄 ${GREEN}Christmas${NC}    - Festive red/green"
-    echo -e "  ${YELLOW}3)${NC} 🐰 ${MAGENTA}Easter${NC}       - Pastel rainbow"
-    echo -e "  ${YELLOW}4)${NC} 💻 ${CYAN}Hacker${NC}       - Bright green cyber"
-    echo -e "  ${YELLOW}5)${NC} 🟢 ${GREEN}Matrix${NC}       - Classic green"
+    echo -e "  ${YELLOW}1)${NC} 🎨 ${MAGENTA}ASCII${NC}        - Cyberpunk purple/cyan ${CYAN}(DEFAULT)${NC}"
+    echo -e "  ${YELLOW}2)${NC} 💻 ${CYAN}Hacker${NC}       - Bright green cyber"
+    echo -e "  ${YELLOW}3)${NC} 🟢 ${GREEN}Matrix${NC}       - Classic green"
+    echo -e "  ${YELLOW}4)${NC} 🎃 ${YELLOW}Halloween${NC}    - Spooky orange/black"
+    echo -e "  ${YELLOW}5)${NC} 🎄 ${GREEN}Christmas${NC}    - Festive red/green"
+    echo -e "  ${YELLOW}6)${NC} 🐰 ${MAGENTA}Easter${NC}       - Pastel rainbow"
     echo ""
-    
-    read -p "Enter choice [1-5] (default: 4): " choice
-    choice="${choice:-4}"
-    
+
+    read -p "Enter choice [1-6] (default: 1): " choice
+    choice="${choice:-1}"
+
     case "$choice" in
-        1) THEME="halloween"; THEME_NAME="Halloween" ;;
-        2) THEME="christmas"; THEME_NAME="Christmas" ;;
-        3) THEME="easter"; THEME_NAME="Easter" ;;
-        4) THEME="hacker"; THEME_NAME="Hacker" ;;
-        5) THEME="matrix"; THEME_NAME="Matrix" ;;
-        *) print_error "Invalid choice. Defaulting to Hacker."; THEME="hacker"; THEME_NAME="Hacker" ;;
+        1) THEME="ascii"; THEME_NAME="ASCII" ;;
+        2) THEME="hacker"; THEME_NAME="Hacker" ;;
+        3) THEME="matrix"; THEME_NAME="Matrix" ;;
+        4) THEME="halloween"; THEME_NAME="Halloween" ;;
+        5) THEME="christmas"; THEME_NAME="Christmas" ;;
+        6) THEME="easter"; THEME_NAME="Easter" ;;
+        *) print_error "Invalid choice. Defaulting to ASCII."; THEME="ascii"; THEME_NAME="ASCII" ;;
     esac
     
     print_success "Selected: $THEME_NAME theme"
@@ -475,7 +477,7 @@ configure_shell() {
 # ================================
 # Rory Terminal Themes
 # ================================
-export RORY_THEME="${RORY_THEME:-hacker}"
+export RORY_THEME="${RORY_THEME:-ascii}"
 EOF
     
     if [[ "$INSTALL_OPTION" == "pty-shim" ]]; then

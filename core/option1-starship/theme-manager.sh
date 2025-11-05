@@ -22,7 +22,7 @@ print_error() { echo -e "${RED}✗${NC} $1"; }
 print_info() { echo -e "${CYAN}ℹ${NC} $1"; }
 
 # Available themes
-THEMES=("halloween" "christmas" "easter" "hacker" "matrix")
+THEMES=("halloween" "christmas" "easter" "hacker" "matrix" "ascii")
 
 # Theme metadata
 declare -A THEME_ICONS=(
@@ -31,6 +31,7 @@ declare -A THEME_ICONS=(
     ["easter"]="🐰"
     ["hacker"]="💻"
     ["matrix"]="🟢"
+    ["ascii"]="🎨"
 )
 
 declare -A THEME_COLORS=(
@@ -39,6 +40,7 @@ declare -A THEME_COLORS=(
     ["easter"]="pastel rainbow"
     ["hacker"]="bright green"
     ["matrix"]="classic green"
+    ["ascii"]="purple/cyan gradient"
 )
 
 declare -A THEME_DESCRIPTIONS=(
@@ -47,6 +49,7 @@ declare -A THEME_DESCRIPTIONS=(
     ["easter"]="Spring celebration with pastel colors"
     ["hacker"]="Cyberpunk green with r0ry.computer branding"
     ["matrix"]="Classic Matrix movie aesthetic"
+    ["ascii"]="Cyberpunk terminal with blocky ASCII art and interactive commands"
 )
 
 # List available themes
